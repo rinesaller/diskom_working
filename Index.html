@@ -9,56 +9,114 @@
     html, body { max-width: 100%; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
     /* Растягиваем приложение на всю ширину экрана (ПК, ноутбук, планшет, телефон) */
-    .app { width: 100%; max-width: 100%; margin: 0 auto; padding: 24px; }
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; overflow: hidden; }
+    .app { width: 100%; max-width: 100%; margin: 0 auto; padding: 24px; display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
     .header h1 { font-size: 22px; font-weight: 600; }
 
-    .tabs { display: flex; gap: 4px; background: var(--card); padding: 4px; border-radius: 10px; border: 1px solid var(--border); width: fit-content; max-width: 100%; margin-bottom: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .tabs { display: flex; gap: 4px; background: var(--card); padding: 4px; border-radius: 10px; border: 1px solid var(--border); width: fit-content; max-width: 100%; margin-bottom: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; flex-shrink: 0; }
     .tab-btn { padding: 8px 16px; border: none; background: transparent; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text2); cursor: pointer; white-space: nowrap; flex-shrink: 0; }
     .tab-btn.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); }
 
+    /* Вкладки растягиваем на всю доступную высоту до нижней границы экрана */
+    .tab-content { flex: 1; min-height: 0; display: none; flex-direction: column; }
+    .tab-content > .card { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+
     .btn { background: var(--blue); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
     .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px; margin-bottom: 16px; min-width: 0; }
-    .debug-box { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 12px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; display: none; word-break: break-word; }
+    .debug-box { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 12px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; display: none; word-break: break-word; flex-shrink: 0; }
 
     /* === Таблица (сводная, с раскрытием через стрелку) === */
-    .table-tools { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+    .table-tools { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
     .tool-btn { border: 1px solid var(--border); background: var(--card); color: var(--text2); padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: inherit; }
     .tool-btn:hover { background: var(--bg); color: var(--text); }
+    .tool-btn.active-filter { border-color: var(--blue); color: var(--blue); background: #eff6ff; }
     .col-settings { position: relative; }
     .col-panel { display: none; position: absolute; top: 34px; left: 0; z-index: 50; background: var(--card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 6px 20px rgb(0 0 0 / 0.12); padding: 12px; width: 240px; max-height: 320px; overflow-y: auto; }
     .col-panel.open { display: block; }
     .col-panel label { display: flex; gap: 8px; align-items: center; font-size: 12px; padding: 4px 0; cursor: pointer; color: var(--text); }
-    .table-wrap { overflow: auto; -webkit-overflow-scrolling: touch; max-height: 75vh; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { text-align: left; padding: 10px 8px; color: var(--text2); font-weight: 500; border-bottom: 1px solid var(--border); white-space: nowrap; position: sticky; top: 0; background: var(--card); z-index: 2; }
-    td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-    tr.hrow.hidden-row { display: none; }
-    tr.hrow.group-row > td { background: #fafafa; }
-    tr.hrow:hover > td { background: #f3f6fc; }
 
-    /* Визуальная иерархия: колонки-«отступы» + направляющие линии (как в сводных таблицах) */
-    th.indent, td.indent { padding: 0 !important; border-bottom: none !important; width: 24px; min-width: 24px; max-width: 24px; position: sticky; background: var(--card); }
-    td.indent div { height: 100%; min-height: 34px; border-left: 2px solid #e2e8f0; margin-left: 11px; }
-    td.col-i1 { left: 0; }
-    td.col-i2 { left: 24px; }
-    th.col-i1 { left: 0; z-index: 4; }
-    th.col-i2 { left: 24px; z-index: 4; }
-    th.col-name { left: 48px; z-index: 4; }
-    td.col-name { left: 48px; }
-    tr.lvl-1 > td.indent div { border-color: transparent; }
-    tr.lvl-2 > td.col-i2 div { border-color: #cbd5e1; }
-    tr.lvl-3 > td.col-i1 div { border-color: #e2e8f0; }
-    tr.lvl-3 > td.col-i2 div { border-color: #cbd5e1; }
+    /* Выпадающий фильтр-меню (чекбоксы значений) */
+    .filter-menu { display: none; position: fixed; z-index: 100; background: var(--card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 8px 24px rgb(0 0 0 / 0.15); padding: 10px; width: 240px; max-height: 320px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .filter-menu.open { display: block; }
+    .fm-search { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 12px; font-family: inherit; margin-bottom: 8px; }
+    .fm-actions { display: flex; gap: 6px; margin-bottom: 8px; }
+    .fm-actions button { flex: 1; border: 1px solid var(--border); background: var(--bg); border-radius: 6px; font-size: 11px; padding: 4px; cursor: pointer; font-family: inherit; color: var(--text2); }
+    .fm-actions button:hover { background: var(--border); color: var(--text); }
+    .fm-list label { display: flex; gap: 8px; align-items: center; font-size: 12px; padding: 3px 0; cursor: pointer; color: var(--text); }
+    .fm-blank { color: var(--text2); font-style: italic; }
 
-    .name-cell { display: flex; align-items: flex-start; gap: 6px; min-width: 200px; max-width: 420px; }
-    .twisty { border: none; background: transparent; cursor: pointer; font-size: 11px; line-height: 1.5; color: var(--text2); width: 18px; height: 18px; flex-shrink: 0; border-radius: 4px; padding: 0; margin-top: 1px; transition: transform .15s ease; }
-    .twisty:hover { background: var(--border); color: var(--text); }
+    /* Таблица: растягиваемся на всю доступную высоту до нижней границы экрана.
+       table-layout: fixed + colgroup — ширины столбцов (в т.ч. ручные) применяются к ЛЮБОМУ столбцу
+       и не «схлопываются» браузером; заголовки при этом всегда видны. */
+    .table-wrap { overflow: auto; -webkit-overflow-scrolling: touch; flex: 1; min-height: 0; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; table-layout: fixed; }
+    th { text-align: left; padding: 10px 8px; color: var(--text2); font-weight: 600; border-bottom: 2px solid var(--border); white-space: nowrap; position: sticky; top: 0; background: var(--card); z-index: 5; overflow: hidden; text-overflow: ellipsis; height: 40px; }
+    td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Зебра: очень светло-серая заливка каждой второй строки для читаемости */
+    tbody tr.hrow:nth-child(even) > td { background: #f6f7f9; }
+    /* Этапы (уровень 1) всегда подсвечены чуть сильнее — визуально отделяем группы */
+    tbody tr.hrow.lvl-1 > td { background: #eef2f8; }
+    tbody tr.hrow.hidden-row { display: none; }
+    tbody tr.hrow.group-row > td { background: #fafafa; }
+    tbody tr.hrow:hover > td { background: #e3ebf7; }
+
+    /* Ручное изменение ширины столбцов: «ручка» на правой границке заголовка */
+    th { position: sticky; }
+    th .resizer { position: absolute; right: 0; top: 0; width: 7px; height: 100%; cursor: col-resize; user-select: none; z-index: 5; }
+    th .resizer:hover, th .resizer.dragging { background: rgba(37, 99, 235, .25); }
+    th .th-label { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 10px); vertical-align: middle; }
+    th .th-label .f-icon { font-size: 9px; color: var(--text2); opacity: .55; flex-shrink: 0; }
+    th .th-label .f-on { color: var(--blue); opacity: 1; }
+    th.sorted .th-label { color: var(--text); }
+
+    /* Визуальная иерархия: ОДНА служебная колонка с направляющими линиями
+       + кнопка «+/−» внутри ячейки «Название». Пустых колонок слева больше нет. */
+    th.col-guide, td.col-guide { padding: 0 !important; width: 26px; min-width: 26px; max-width: 26px; position: sticky; left: 0; z-index: 6; border-bottom: none !important; }
+    /* Направляющие линии вложенности — рисуем на самой ячейке (div может схлопнуться по высоте) */
+    td.col-guide div { display: none; }
+    tr.lvl-2 > td.col-guide { border-left: 2px solid #cbd5e1; }
+    tr.lvl-3 > td.col-guide { border-left: 2px solid #cbd5e1; margin-left: 22px; }
+    /* Фон закреплённых слева колонок: белый / зебра / hover — чтобы строки не сливались.
+       ВАЖНО: !important — иначе правило "tr.lvl-1 > td" перекрывало фон и «дырки» ломали зебру */
+    th.col-guide, th.col-tw, th.col-num, th.col-name { background: var(--card); }
+    td.col-guide, td.col-tw, td.col-num, td.col-name { background: var(--card) !important; }
+    tbody tr.hrow:nth-child(even) > td.col-guide,
+    tbody tr.hrow:nth-child(even) > td.col-tw,
+    tbody tr.hrow:nth-child(even) > td.col-num,
+    tbody tr.hrow:nth-child(even) > td.col-name { background: #f6f7f9 !important; }
+    tbody tr.hrow:hover > td.col-guide,
+    tbody tr.hrow:hover > td.col-tw,
+    tbody tr.hrow:hover > td.col-num,
+    tbody tr.hrow:hover > td.col-name { background: #e3ebf7 !important; }
+    /* Этапы (lvl-1): закреплённые колонки тоже должны быть подсвечены — иначе «белые дырки» */
+    tbody tr.hrow.lvl-1 > td.col-guide,
+    tbody tr.hrow.lvl-1 > td.col-tw,
+    tbody tr.hrow.lvl-1 > td.col-num,
+    tbody tr.hrow.lvl-1 > td.col-name { background: #eef2f8 !important; }
+    tbody tr.hrow.lvl-1:hover > td.col-guide,
+    tbody tr.hrow.lvl-1:hover > td.col-tw,
+    tbody tr.hrow.lvl-1:hover > td.col-num,
+    tbody tr.hrow.lvl-1:hover > td.col-name { background: #e3ebf7 !important; }
+    /* Колонка «+/−» убрана — кнопка раскрытия живёт внутри «Название» (см. .twisty) */
+    th.col-tw, td.col-tw { display: none; }
+    /* Колонка «№» (колонка B листа «Таблица») — номер элемента структуры */
+    th.col-num { left: 26px; z-index: 5; width: 58px; min-width: 58px; max-width: 58px; padding: 10px 4px !important; text-align: center; }
+    td.col-num { left: 26px; width: 58px; min-width: 58px; max-width: 58px; text-align: center; padding: 4px !important; font-size: 11px; color: var(--text2); white-space: nowrap; }
+    th.col-name { left: 84px; z-index: 5; min-width: 220px; }
+    td.col-name { left: 84px; min-width: 220px; }
+
+    .name-cell { display: flex; align-items: flex-start; gap: 6px; min-width: 0; }
+    /* Кнопка +/− раскрытия структуры (как в сводных таблицах Excel) — видна всегда */
+    .twisty { border: 1px solid #94a3b8; background: var(--card); cursor: pointer; font-size: 13px; font-weight: 700; line-height: 1; color: #334155; width: 18px; height: 18px; flex-shrink: 0; border-radius: 4px; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-family: inherit; }
+    .twisty:hover { background: #eff6ff; color: var(--blue); border-color: var(--blue); }
     .twisty.empty { visibility: hidden; cursor: default; }
     .task-name { min-width: 0; word-break: break-word; }
     .lvl-1 .task-name { font-weight: 600; font-size: 14px; }
-    .lvl-1 > td { background: #f8fafc; }
+    tr.lvl-1 > td { background: #f8fafc; }
     .lvl-2 .task-name { font-weight: 500; }
     .lvl-3 .task-name { color: var(--text2); font-size: 12px; }
     .child-count { display: inline-block; background: var(--bg); border: 1px solid var(--border); color: var(--text2); border-radius: 10px; padding: 0 7px; font-size: 10px; font-weight: 600; margin-left: 6px; vertical-align: 1px; }
@@ -89,6 +147,8 @@
     .h-card.lvl-2 { border-left: 4px solid var(--green); }
     .h-card.lvl-3 { border-left: 4px solid var(--border); }
     .hc-head { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 8px; }
+    .hc-num { font-size: 10px; color: var(--text2); background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; margin-right: 6px; vertical-align: 1px; white-space: nowrap; }
+    .row-num { font-variant-numeric: tabular-nums; }
     .hc-title { font-weight: 600; font-size: 13px; word-break: break-word; min-width: 0; }
     .hc-sub { font-size: 11px; color: var(--text2); margin-bottom: 8px; word-break: break-word; }
     .hc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; font-size: 12px; }
@@ -108,9 +168,15 @@
     /* Гант */
     .gantt-controls { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
     .gantt-controls select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit; }
-    .gantt-wrap { display: flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--card); max-width: 100%; }
-    .gantt-side { width: 280px; min-width: 200px; flex-shrink: 0; border-right: 1px solid var(--border); overflow: hidden; }
-    .gantt-time { flex: 1; overflow-x: auto; position: relative; min-width: 0; }
+    /* Гант: растягиваем на всю доступную высоту до нижней границы экрана */
+    #gantt-root { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    .gantt-wrap { display: flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--card); max-width: 100%; flex: 1; min-height: 0; }
+    /* Гант: колонка названий + «ручка» по правому краю — тянем мышкой, ширина сохраняется */
+    .g-side-box { position: relative; flex-shrink: 0; display: flex; }
+    .gantt-side { width: 280px; min-width: 140px; border-right: none; overflow-y: hidden; overflow-x: auto; flex: none; }
+    .g-resizer { width: 6px; flex-shrink: 0; cursor: col-resize; user-select: none; background: var(--border); transition: background .15s; touch-action: none; }
+    .g-resizer:hover, .g-resizer.dragging { background: var(--blue); }
+    .gantt-time { flex: 1; overflow: auto; position: relative; min-width: 0; }
     .g-row { display: flex; height: 36px; border-bottom: 1px solid var(--border); align-items: center; padding: 0 12px; font-size: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     .g-row.lvl-1 { font-weight: 600; background: #fafafa; }
     .g-row.lvl-2 { padding-left: 24px; }
@@ -119,7 +185,7 @@
     .g-cell { flex-shrink: 0; border-right: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: center; }
     .g-cell.day { width: 30px; } .g-cell.week { width: 60px; } .g-cell.month { width: 100px; }
     .g-cell.we { background: #fafafa; }
-    .g-bar-wrap { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+    .g-bar-wrap { pointer-events: none; }
     .g-bar { position: absolute; height: 22px; top: 7px; border-radius: 6px; pointer-events: auto; overflow: hidden; box-shadow: 0 1px 2px rgb(0 0 0 / 0.1); }
     .g-bar:hover { transform: scale(1.02); z-index: 10; }
     .g-bar.done { background: #d1fae5; border: 1px solid #10b981; }
@@ -131,10 +197,21 @@
     .g-bar.plan .g-bar-fill { background: #f59e0b; }
     .g-bar-label { position: relative; z-index: 2; padding: 0 8px; font-size: 10px; font-weight: 500; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+    /* Всплывающая подсказка Ганта (Ответственный, даты, статус) */
+    .g-tip { position: fixed; z-index: 200; background: #111827; color: #f9fafb; border-radius: 8px; padding: 8px 10px; font-size: 11px; line-height: 1.5; max-width: 300px; pointer-events: none; box-shadow: 0 6px 20px rgb(0 0 0 / 0.25); display: none; word-break: break-word; }
+    .g-tip b { font-size: 12px; }
+    .g-tip .tip-resp { color: #93c5fd; }
+    .gantt-wrap .g-bar { cursor: pointer; }
+
     /* Фиксация колонок иерархии и «Название» слева при широкой таблице */
-    th.col-name, td.col-name { position: sticky; z-index: 3; background: var(--card); }
-    tr.lvl-1 > td.col-name { background: #f8fafc; }
+    th.col-name, td.col-name { position: sticky; z-index: 5; }
     td.col-name { box-shadow: 2px 0 4px -2px rgb(0 0 0 / 0.08); }
+    /* Обычные (не закреплённые) ячейки должны перекрывать sticky-колонки при скролле */
+    tbody td:not(.col-guide):not(.col-num):not(.col-name) { background: transparent; }
+    tbody tr.hrow > td:not(.col-guide):not(.col-num):not(.col-name) { background: var(--card); }
+    tbody tr.hrow:nth-child(even) > td:not(.col-guide):not(.col-num):not(.col-name) { background: #f6f7f9; }
+    tbody tr.hrow.lvl-1 > td:not(.col-guide):not(.col-num):not(.col-name) { background: #eef2f8; }
+    tbody tr.hrow:hover > td:not(.col-guide):not(.col-num):not(.col-name) { background: #e3ebf7; }
 
     .loader { text-align: center; padding: 40px; color: var(--text2); }
     .err { color: var(--red); font-weight: 500; }
@@ -160,13 +237,15 @@
       .tab-btn { flex: 1 0 auto; text-align: center; padding: 8px 12px; font-size: 13px; }
     }
     @media (max-width: 640px) {
-      /* широкая таблица -> карточки */
+      /* На телефоне — обычная прокрутка страницы, карточки вместо широкой таблицы */
+      body { overflow: auto; }
       #hier-cards { display: block !important; }
       #hier-table { display: none !important; }
       .hier-cards { grid-template-columns: 1fr; }
       /* на телефоне фиксация колонок не нужна — экономим место */
-      th.col-name, td.col-name, th.indent, td.indent { position: static; }
-      .table-wrap { max-height: none; }
+      th.col-name, td.col-name, th.col-guide, td.col-guide, th.col-num, td.col-num, th.col-tw, td.col-tw { position: static; }
+      .table-wrap { max-height: none; flex: none; }
+      .tab-content > .card { overflow: visible; }
     }
     @media (min-width: 641px) {
       #hier-cards { display: none !important; }    /* карточки только на телефоне */
@@ -197,7 +276,8 @@
           <button class="tool-btn" onclick="toggleColPanel(event)">⚙ Столбцы</button>
           <div class="col-panel" id="col-panel"></div>
         </div>
-        <span style="font-size:11px;color:var(--text2);margin-left:auto">Клик по чипу связи — переход к связанной задаче</span>
+        <button class="tool-btn" id="btn-clear-filters" style="display:none" onclick="clearAllFilters()">✕ Сбросить фильтры</button>
+        <span style="font-size:11px;color:var(--text2);margin-left:auto">Фильтр — клик по заголовку · ширина — тянем за край заголовка</span>
       </div>
       <div class="table-wrap" id="hier-table"><div class="loader">Загрузка...</div></div>
       <div class="hier-cards" id="hier-cards" style="display:none"></div>
@@ -223,6 +303,11 @@
     </div>
   </div>
 </div>
+
+<!-- Всплывающая подсказка Ганта -->
+<div class="g-tip" id="g-tip"></div>
+<!-- Выпадающий фильтр значений столбца -->
+<div class="filter-menu" id="filter-menu"></div>
 
 <script>
   let appData = { rows: [], options: {} };
@@ -332,19 +417,44 @@
   }
 
   // === СВЯЗИ ПО ID ===
-  // Колонка A ("ID") — уникальный ID строки. Колонка W ("ID Связи") — ID родителя.
+  // Колонка A ("ID") — уникальный ID строки. Колонка W ("ID Связи") — ID связи.
   function getLinkIds(r) {
-    // Основной источник — колонка W "ID Связи". Поддерживаются значения "1; 5" и "1, 5".
+    // Поддерживаются значения "1; 5" и "1, 5".
     let raw = String(r['ID Связи'] || '');
     if (!raw.trim()) return [];
     return raw.split(/[;,\s]+/).map(v => v.trim()).filter(v => v !== '');
   }
 
-  // Иерархия для сводной таблицы: Этап > Задача > Под-задача + связи по ID (колонка W).
-  // Родителем задачи является СТРОКА этапа (у которой заполнен только "Этап"),
-  // родителем под-задачи — СТРОКА задачи (с совпадающими "Этап" и "Задача").
-  // Если такой строки-предка нет — строка показывается в корне списка.
+  // === ИЕРАХИЯ ПО КОЛОНКЕ «№» (колонка B) ===
+  // № структурирует этапы/задачи/подзадачи точечной нотацией: "1", "1.2", "1.2.3".
+  // Родитель строки — номер без последней части (родитель "1.2.3" → "1.2").
+  // Глубина номера = уровень вложенности. Если колонки «№» нет или она не образует
+  // дерево — используется запасная логика по столбцам Этап / Задача / Под-задача.
+  function normNum(v) {
+    return String(v == null ? '' : v).trim().replace(/,$/, '').replace(/\s+/g, '');
+  }
+  function numToLevel(num) {
+    if (!num) return null;
+    const parts = num.split('.');
+    if (!parts.every(p => /^\d+$/.test(p))) return null;
+    return Math.min(parts.length, 3);
+  }
+  function parentOfNum(num) {
+    const i = num.lastIndexOf('.');
+    return i > 0 ? num.substring(0, i) : null;
+  }
+
+  let byNum = {};       // нормализованный № -> строка
+  let treeMode = false; // true — строим дерево по колонке «№»
+
   function getParentKey(r) {
+    if (treeMode) {
+      const num = normNum(r._num);
+      const p = parentOfNum(num);
+      if (p && byNum[p]) return rowKey(byNum[p]);
+      return 'R'; // вершина дерева (этап верхнего уровня или строка без родителя)
+    }
+    // Запасной вариант: Этап > Задача > Под-задача
     const lvl = getRowLevel(r);
     if (lvl === 3) {
       const task = appData.rows.find(x => x !== r && !x['Под-задача'] && x['Задача'] &&
@@ -355,8 +465,7 @@
       const stage = appData.rows.find(x => x !== r && x['Этап'] === r['Этап'] && !x['Задача'] && !x['Под-задача']);
       return stage ? rowKey(stage) : 'R';
     }
-    if (lvl === 1 && r['Этап']) return 'R';
-    return 'X'; // без названия — корневая «висячая» строка
+    return 'R';
   }
 
   function rowKey(r) { return 'r' + r._rowIndex; }
@@ -364,15 +473,35 @@
   function buildRelations() {
     idMap = {};
     childrenMap = {};
+    byNum = {};
     appData.rows.forEach(r => {
       const id = String(r['ID'] || '').trim();
       if (id && !idMap[id]) idMap[id] = r;
     });
-    // Дети по дереву (для сворачивания)
+
+    // Проверяем, можно ли строить дерево по колонке «№»:
+    // все непустые номера валидны и хотя бы один содержит точку (есть вложенность)
+    const nums = appData.rows.map(r => normNum(r._num)).filter(n => n !== '');
+    treeMode = nums.length > 0 && nums.every(n => numToLevel(n) !== null) &&
+               nums.some(n => n.indexOf('.') !== -1);
+
+    if (treeMode) {
+      appData.rows.forEach(r => {
+        const n = normNum(r._num);
+        if (n && !byNum[n]) byNum[n] = r;
+      });
+    }
+
+    // Дети по дереву (для раскрытия/сворачивания кнопок +/−)
     appData.rows.forEach(r => {
       const p = getParentKey(r);
       (childrenMap[p] = childrenMap[p] || []).push(r);
     });
+  }
+
+  // Отображаемый номер строки из колонки «№» (пусто, если колонки нет)
+  function displayNum(r) {
+    return treeMode ? normNum(r._num) : '';
   }
 
   function getRowName(r) { return r['Под-задача'] || r['Задача'] || r['Этап'] || '(без названия)'; }
@@ -380,6 +509,11 @@
     if (r['Под-задача']) return 3;
     if (r['Задача']) return 2;
     return 1;
+  }
+  // Уровень для отображения: в режиме «№» берём глубину номера, иначе — по столбцам
+  function getDisplayLevel(r) {
+    if (treeMode) return numToLevel(normNum(r._num)) || getRowLevel(r);
+    return getRowLevel(r);
   }
 
   // Все связанные задачи: потомки по ID (кого привязали к этой строке) и предки по ID
@@ -406,7 +540,7 @@
     while (cur && g0++ < 50) {
       const pk = getParentKey(cur);
       expanded[pk] = true;
-      if (pk === 'R' || pk === 'X') break;
+      if (pk === 'R') break;
       cur = appData.rows.find(x => rowKey(x) === pk);
     }
     // Раскрыть предков по ID-связям (колонка W "ID Связи")
@@ -467,8 +601,226 @@
   function docCell(r) {
     const v = String(r['Документ'] || '').trim();
     if (!v) return txtCell(r, 'Документ');
-    if (isUrl(v)) return `<a class="doc-link" href="${esc(v)}" target="_blank" rel="noopener">📎 Открыть</a>`;
+    // Google Таблица может хранить ссылку как текст "Текст (https://...)" — выделяем URL
+    let url = null;
+    const m = v.match(/https?:\/\/[^\s)]+/i);
+    if (m) url = m[0];
+    if (url) {
+      const label = v.replace(url, '').replace(/[()\s]+$/g, '').trim() || 'Открыть документ';
+      return `<a class="doc-link" href="${esc(url)}" target="_blank" rel="noopener" title="${esc(url)}">📎 ${esc(label)}</a>`;
+    }
     return txtCell(r, 'Документ');
+  }
+
+  // === ФИЛЬТРЫ СТОЛБЦОВ ===
+  // Для каждого столбца — выпадающий список уникальных значений (чекбоксы).
+  let colFilters = {};   // key -> массив выбранных значений (undefined = фильтр не активен)
+  let sortState = { key: null, dir: 1 };
+  try { colFilters = JSON.parse(localStorage.getItem('colFilters') || '{}'); } catch (e) { colFilters = {}; }
+  function saveFilters() { try { localStorage.setItem('colFilters', JSON.stringify(colFilters)); } catch (e) {} }
+
+  // Значение ячейки «как строка» — для фильтрации и сортировки
+  function cellValueStr(r, c) {
+    if (c.key === '__NAME__') return getRowName(r);
+    if (c.key === '__NUM__') return displayNum(r); // колонка «№» листа «Таблица»
+    if (c.render === 'links') {
+      const { down, up } = getLinkedTasks(r);
+      return down.concat(up).map(l => getRowName(l.row)).join(', ');
+    }
+    if (c.key === '__GATE__') {
+      const g = r['Gate'], s = r['Sprint'];
+      if (String(g || '') !== '' && String(s || '') !== '') return `${s} / ${g}`;
+      return String(g || s || '');
+    }
+    return String(r[c.key] == null ? '' : r[c.key]).trim();
+  }
+
+  function rowPassesFilters(r) {
+    for (const key of Object.keys(colFilters)) {
+      const sel = colFilters[key];
+      if (!sel || !Array.isArray(sel)) continue;
+      let v;
+      if (key === '__NAME__' || key === '__NUM__') {
+        v = cellValueStr(r, { key: key, render: 'text' }); // псевдо-колонки Название / «№»
+      } else {
+        const c = COL_CONFIG.find(x => x.key === key);
+        if (!c) continue;
+        v = cellValueStr(r, c);
+      }
+      if (sel.indexOf(v) === -1) return false;
+    }
+    return true;
+  }
+
+  function hasActiveFilters() {
+    return Object.keys(colFilters).some(k => Array.isArray(colFilters[k]) && colFilters[k].length >= 0 && isFilterModified(k));
+  }
+  function isFilterModified(key) {
+    const sel = colFilters[key];
+    if (!Array.isArray(sel)) return false;
+    const all = collectColumnValues(key);
+    return sel.length !== all.length; // выбраны не все значения => фильтр активен
+  }
+
+  function collectColumnValues(key) {
+    if (key === '__NAME__' || key === '__NUM__') {
+      // Псевдо-колонки: Название и «№» — тоже доступны для фильтрации
+      const pseudo = { key, render: key === '__NAME__' ? 'name' : 'text' };
+      const set = new Set();
+      appData.rows.forEach(r => set.add(cellValueStr(r, pseudo)));
+      return [...set].sort((a, b) => a.localeCompare(b, 'ru', { numeric: true }));
+    }
+    const c = COL_CONFIG.find(x => x.key === key);
+    if (!c) return [];
+    const set = new Set();
+    appData.rows.forEach(r => set.add(cellValueStr(r, c)));
+    return [...set].sort((a, b) => a.localeCompare(b, 'ru'));
+  }
+
+  function openFilterMenu(ev, key) {
+    ev.stopPropagation();
+    closeFilterMenu();
+    const menu = document.getElementById('filter-menu');
+    const all = collectColumnValues(key);
+    let sel = colFilters[key];
+    if (!Array.isArray(sel)) sel = all.slice(); // по умолчанию выбрано всё
+    const filtered = all.filter(v => v !== '');
+    const hasBlank = all.indexOf('') !== -1;
+
+    function draw(filterText) {
+      const shown = filtered.filter(v => !filterText || v.toLowerCase().indexOf(filterText.toLowerCase()) !== -1);
+      menu.innerHTML = `
+        <input class="fm-search" placeholder="Поиск значений..." value="${esc(filterText || '')}" oninput="fmSearch(this.value,'${key}')">
+        <div class="fm-actions">
+          <button onclick="fmSelectAll('${key}',true)">Все</button>
+          <button onclick="fmSelectAll('${key}',false)">Снять все</button>
+          <button onclick="fmReset('${key}')">Сброс</button>
+        </div>
+        <div class="fm-list">
+          ${shown.map(v => `<label><input type="checkbox" value="${esc(v)}" ${sel.indexOf(v) !== -1 ? 'checked' : ''} onchange="fmToggle('${key}', this.value, this.checked)"> ${esc(v)}</label>`).join('')}
+          ${hasBlank ? `<label class="fm-blank"><input type="checkbox" value="" ${sel.indexOf('') !== -1 ? 'checked' : ''} onchange="fmToggle('${key}', '', this.checked)"> (пусто)</label>` : ''}
+        </div>`;
+    }
+
+    menu._state = { key, sel, all };
+    draw('');
+    menu.classList.add('open');
+    // Позиционируем меню под заголовком
+    const rect = ev.currentTarget.getBoundingClientRect();
+    const mw = 240, mh = Math.min(320, window.innerHeight - 20);
+    let left = Math.min(rect.left, window.innerWidth - mw - 8);
+    menu.style.left = Math.max(8, left) + 'px';
+    menu.style.top = Math.min(rect.bottom + 4, window.innerHeight - mh) + 'px';
+    menu._draw = draw;
+  }
+
+  function fmSearch(txt, key) {
+    const menu = document.getElementById('filter-menu');
+    if (menu._state && menu._state.key === key && menu._draw) {
+      // сохраняем чекбоксы, которые пользователь уже менял через fmToggle (sel синхронен)
+      menu._draw(txt);
+    }
+  }
+  function fmToggle(key, val, checked) {
+    const menu = document.getElementById('filter-menu');
+    if (!menu._state) return;
+    const sel = menu._state.sel;
+    const i = sel.indexOf(val);
+    if (checked && i === -1) sel.push(val);
+    if (!checked && i !== -1) sel.splice(i, 1);
+    applyFilterSelection(key, sel.slice());
+  }
+  function fmSelectAll(key, on) {
+    const menu = document.getElementById('filter-menu');
+    if (!menu._state) return;
+    const sel = on ? menu._state.all.slice() : [];
+    menu._state.sel = sel;
+    applyFilterSelection(key, sel.slice());
+    if (menu._draw) menu._draw('');
+  }
+  function fmReset(key) {
+    delete colFilters[key];
+    saveFilters();
+    closeFilterMenu();
+    renderHier();
+  }
+  function applyFilterSelection(key, sel) {
+    const all = collectColumnValues(key);
+    if (sel.length === all.length) delete colFilters[key]; // выбрано всё = нет фильтра
+    else colFilters[key] = sel;
+    saveFilters();
+    renderHier();
+    // перерисовываем содержимое меню (счётчики/галочки)
+    const menu = document.getElementById('filter-menu');
+    if (menu._state && menu._state.key === key) { menu._state.sel = Array.isArray(colFilters[key]) ? colFilters[key].slice() : all.slice(); }
+  }
+  function clearAllFilters() { colFilters = {}; saveFilters(); closeFilterMenu(); renderHier(); }
+  function closeFilterMenu() {
+    const menu = document.getElementById('filter-menu');
+    if (menu) { menu.classList.remove('open'); menu.innerHTML = ''; menu._state = null; menu._draw = null; }
+  }
+
+  function sortByCol(key) {
+    if (sortState.key === key) sortState.dir = -sortState.dir;
+    else { sortState.key = key; sortState.dir = 1; }
+    renderHier();
+  }
+
+  // === РАСКРЫТИЕ И СТРУКТУРА: ширина столбцов (ручное изменение) ===
+  let colWidths = {};
+  try { colWidths = JSON.parse(localStorage.getItem('colWidths') || '{}'); } catch (e) { colWidths = {}; }
+  function saveWidths() { try { localStorage.setItem('colWidths', JSON.stringify(colWidths)); } catch (e) {} }
+
+  function startResize(ev, key) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const handle = ev.target;
+    const th = handle.closest('th');
+    const startX = ev.clientX != null ? ev.clientX : (ev.touches && ev.touches[0] ? ev.touches[0].clientX : 0);
+    const startW = th.getBoundingClientRect().width;
+    handle.classList.add('dragging');
+    document.body.style.userSelect = 'none';
+    const wrap = document.getElementById('hier-table');
+    const table = wrap ? wrap.querySelector('table') : null;
+
+    function applyWidth(w) {
+      w = Math.max(30, Math.round(w));
+      colWidths[key] = w;
+      // Ширины колонок живут в <colgroup> — обновляем <col> этого столбца.
+      // Это работает для ЛЮБОГО столбца таблицы (включая закреплённые №/Название).
+      if (table) {
+        const idx = Array.prototype.indexOf.call(th.parentNode.children, th);
+        const colEl = table.querySelector(`colgroup col:nth-child(${idx + 1})`);
+        if (colEl) colEl.style.width = w + 'px';
+        // пересчитываем суммарную ширину таблицы
+        let sumW = 0;
+        table.querySelectorAll('colgroup col').forEach(c => { sumW += parseFloat(c.style.width) || 0; });
+        const avail = wrap.clientWidth || window.innerWidth;
+        table.style.width = sumW > avail ? sumW + 'px' : '100%';
+      }
+      applyStickyOffsets(); // закреплённые колонки сдвигаются при изменении ширины соседей
+    }
+
+    function onMove(e) {
+      const x = e.clientX != null ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : startX);
+      applyWidth(startW + (x - startX));
+    }
+    function onUp() {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.removeEventListener('touchmove', onTouchMove);
+      document.removeEventListener('touchend', onUp);
+      handle.classList.remove('dragging');
+      document.body.style.userSelect = '';
+      saveWidths();
+    }
+    function onTouchMove(e) {
+      if (e.touches && e.touches[0]) onMove({ clientX: e.touches[0].clientX });
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onTouchMove, { passive: true });
+    document.addEventListener('touchend', onUp);
   }
 
   function linkChip(row, dir) {
@@ -512,30 +864,121 @@
   }
 
   // === ОТРИСОВКА: СВОДНАЯ ТАБЛИЦА ===
+  const NAME_COL = { key: '__NAME__', label: 'Название', render: 'name' };
+
+  // Дефолтные ширины служебных колонок (можно менять мышкой — сохранится в colWidths)
+  const GUIDE_W_DEF = 26, NUM_W_DEF = 58, NAME_W_DEF = 260;
+
+  function thHtml(col, cls) {
+    const key = col.key;
+    const title = esc(col.label || col.key);
+    const sorted = sortState.key === key;
+    const filtered = isFilterModified(key);
+    return `<th class="${cls}${sorted ? ' sorted' : ''}" data-fkey="${key}">
+      <span class="th-label" onclick="openFilterMenu(event,'${key}')" title="Фильтр по столбцу «${title}»">${title}<span class="f-icon ${filtered ? 'f-on' : ''}">▼</span>${sorted ? `<span class="f-on">${sortState.dir === 1 ? '↑' : '↓'}</span>` : ''}</span>
+      <span class="resizer" ontouchstart="startResize(event,'${key}')" onmousedown="startResize(event,'${key}')"></span>
+    </th>`;
+  }
+
+  // Служебные закреплённые колонки тоже можно расширять/сужать (хранится в colWidths)
+  function fixedTh(cls, key, label) {
+    const head = label
+      ? `<span class="th-label" onclick="openFilterMenu(event,'${key}')" title="Фильтр по столбцу «${label}»">${esc(label)}<span class="f-icon ${isFilterModified(key) ? 'f-on' : ''}">▼</span></span>`
+      : '';
+    return `<th class="${cls}" data-fkey="${key}">${head}<span class="resizer" ontouchstart="startResize(event,'${key}')" onmousedown="startResize(event,'${key}')"></span></th>`;
+  }
+
+  // Ширины колонок задаются через <colgroup> — при table-layout:fixed это единственный
+  // надёжный способ применить ручную ширину к ЛЮБОМУ столбцу таблицы.
+  function colW(key, def) { return colWidths[key] || def; }
+
+  function buildColgroup(activeCols) {
+    let cg = '<colgroup>';
+    cg += `<col data-fkey="__GUIDE__" style="width:${colW('__GUIDE__', GUIDE_W_DEF)}px">`;
+    cg += `<col data-fkey="__NUM__" style="width:${colW('__NUM__', NUM_W_DEF)}px">`;
+    cg += `<col data-fkey="__NAME__" style="width:${colW('__NAME__', NAME_W_DEF)}px">`;
+    activeCols.forEach(c => {
+      const defW = ({ status: 110, progress: 90, owner: 140, resp: 130, date: 90, text: 110, textarea: 140, comment: 160, doc: 130, gate: 110, links: 170, blocker: 120 })[c.render] || 120;
+      cg += `<col data-fkey="${c.key}" style="width:${colW(c.key, defW)}px">`;
+    });
+    cg += '</colgroup>';
+    return cg;
+  }
+
+  // Фиксация left у закреплённых колонок с учётом текущих (в т.ч. ручных) ширин
+  function applyStickyOffsets() {
+    const wrap = document.getElementById('hier-table');
+    if (!wrap) return;
+    const gL = colW('__GUIDE__', GUIDE_W_DEF);
+    const numL = gL + colW('__NUM__', NUM_W_DEF);
+    const nameL = numL + colW('__NAME__', NAME_W_DEF);
+    wrap.querySelectorAll('th.col-guide, td.col-guide').forEach(el => el.style.left = '0px');
+    wrap.querySelectorAll('th.col-num, td.col-num').forEach(el => el.style.left = gL + 'px');
+    wrap.querySelectorAll('th.col-name, td.col-name').forEach(el => el.style.left = numL + 'px');
+  }
+
   function renderHier() {
     const c = document.getElementById('hier-table');
     const cc = document.getElementById('hier-cards');
+    closeFilterMenu();
     renderColPanel();
     if (!appData.rows.length) { c.innerHTML = '<p style="padding:20px">Нет данных</p>'; cc.innerHTML = ''; return; }
 
     // Сохраняем позицию скролла
     savedScroll = c.scrollTop;
 
-    const roots = childrenMap['R'] || [];
-    const orphans = childrenMap['X'] || [];
-    const allTop = roots.concat(orphans);
+    // Фильтрация: строки, не прошедшие фильтры, исключаются; дети проходят, если прошёл родитель
+    const passCache = {};
+    function rowPasses(r) {
+      const k = rowKey(r);
+      if (k in passCache) return passCache[k];
+      let res = rowPassesFilters(r);
+      if (!res) {
+        // Если проходит кто-то из потомков — оставляем родителя (иначе потеряем дерево)
+        const kids = childrenMap[k] || [];
+        res = kids.some(rowPasses);
+      }
+      passCache[k] = res;
+      return res;
+    }
+
+    const roots = (childrenMap['R'] || []).filter(rowPasses);
+
+    // Сортировка: по «№» (иерархия этапов/задач/подзадач) — родитель всегда перед потомками.
+    function numOrder(a, b) {
+      if (!treeMode) return a._rowIndex - b._rowIndex; // без «№» — порядок строк листа
+      const na = normNum(a._num), nb = normNum(b._num);
+      if (na && nb) {
+        const c = na.localeCompare(nb, 'ru', { numeric: true });
+        if (c !== 0) return c;
+      } else if (na) return -1; else if (nb) return 1;
+      return a._rowIndex - b._rowIndex;
+    }
+    Object.keys(childrenMap).forEach(k => childrenMap[k].sort(numOrder));
+    roots.sort(numOrder);
+
+    // Принудительная сортировка по колонке (если пользователь кликнул ↑/↓ в заголовке)
+    if (sortState.key) {
+      const col = sortState.key === '__NAME__' ? NAME_COL : COL_CONFIG.find(x => x.key === sortState.key);
+      if (col) {
+        roots.sort((a, b) => cellValueStr(a, col).localeCompare(cellValueStr(b, col), 'ru') * sortState.dir);
+      }
+    }
 
     // Защита от циклов в ID-связях (рекурсивный renderRow не должен зациклиться)
     const renderedSet = new Set();
 
     const activeCols = COL_CONFIG.filter(col => visibleCols[col.key]);
-    const colTitle = col => col.label || col.key;
 
-    let html = `<table><thead><tr>
-      <th class="indent col-i1"></th><th class="indent col-i2"></th>
-      <th class="col-name" style="min-width:260px">Название</th>`;
-    activeCols.forEach(col => { html += `<th>${esc(colTitle(col))}</th>`; });
-    html += `</tr></thead><tbody>`;
+    // Кнопка сброса фильтров
+    const anyFilter = Object.keys(colFilters).some(isFilterModified);
+    const btnCF = document.getElementById('btn-clear-filters');
+    if (btnCF) btnCF.style.display = anyFilter ? '' : 'none';
+
+    let html = `<table>${buildColgroup(activeCols)}<thead><tr>
+      ${fixedTh('col-guide', '__GUIDE__', '')}
+      ${fixedTh('col-num', '__NUM__', '№')}
+      ${thHtml(NAME_COL, 'col-name')}</tr></thead><tbody>`;
 
     let cardsHtml = '';
 
@@ -543,30 +986,34 @@
       const key = rowKey(r);
       if (renderedSet.has(key)) return; // защита от циклов
       renderedSet.add(key);
-      const lvl = getRowLevel(r);
-      const kids = childrenMap[key] || [];
+      const lvl = getDisplayLevel(r);
+      const kids = (childrenMap[key] || []).filter(rowPasses);
       const isOpen = !!expanded[key];
+      // Кнопка раскрытия структуры (+/−) — как в сводных таблицах, внутри колонки «Название»
       const twisty = kids.length
-        ? `<button class="twisty" title="${isOpen ? 'Свернуть' : 'Раскрыть'} вложенные задачи" onclick="toggleRow('${key}')">${isOpen ? '▼' : '▶'}</button>`
-        : `<span class="twisty empty"></span>`;
+        ? `<button class="twisty" title="${isOpen ? 'Свернуть (−)' : 'Раскрыть (+)'} вложенные задачи" onclick="toggleRow('${key}')">${isOpen ? '−' : '+'}</button>`
+        : `<span class="twisty empty">+</span>`;
       const name = esc(getRowName(r));
       const stage = r['Этап'] && lvl > 1 ? `<div style="font-size:10px;color:var(--text2)">${esc(r['Этап'])}</div>` : '';
-      // Колонки-«отступы» со направляющими линиями — визуальная вложенность как в сводной таблице
-      const indentCells = `<td class="indent col-i1"><div></div></td><td class="indent col-i2"><div></div></td>`;
-      // Счётчик потомков у стрелки (видно, сколько задач скрыто)
+      // Отступ вложенности — через padding ячейки направляющей (без лишних пустых колонок)
+      const guidePad = `<td class="col-guide" style="padding-left:${(lvl - 1) * 14}px"></td>`;
+      // Номер элемента структуры из колонки «№» листа «Таблица»
+      const numHtml = displayNum(r) ? `<span class="row-num">${esc(displayNum(r))}</span>` : '';
+      // Счётчик потомков у кнопки (видно, сколько задач скрыто)
       const countBadge = kids.length && !isOpen ? `<span class="child-count">${kids.length}</span>` : '';
 
       // ID (колонка A) и ID Связи (колонка W) НЕ отображаются — они служебные
       html += `<tr class="hrow lvl-${lvl}" data-row="${r._rowIndex}">
-        ${indentCells}
+        ${guidePad}
+        <td class="col-num">${numHtml}</td>
         <td class="col-name"><div class="name-cell">${twisty}<div class="task-name">${name}${countBadge}${stage}</div></div></td>`;
       activeCols.forEach(col => { html += `<td>${renderCell(r, col)}</td>`; });
       html += `</tr>`;
 
-      // Мобильная карточка (без ID)
+      // Мобильная карточка (без ID, с номером «№»)
       cardsHtml += `<div class="h-card lvl-${lvl}" data-row="${r._rowIndex}" style="margin-left:${(lvl - 1) * 8}px">
         <div class="hc-head">${twisty}<div>
-          <div class="hc-title">${name}${countBadge}</div>
+          <div class="hc-title">${displayNum(r) ? `<span class="hc-num">${esc(displayNum(r))}</span>` : ''}${name}${countBadge}</div>
           ${stage}
         </div></div>
         <div class="hc-grid">
@@ -585,19 +1032,38 @@
       if (isOpen) kids.forEach(renderRow);
     }
 
-    allTop.forEach(r => renderRow(r));
+    roots.forEach(r => renderRow(r));
 
     html += '</tbody></table>';
     c.innerHTML = html;
     cc.innerHTML = `<div class="hier-cards">${cardsHtml}</div>`;
     c.scrollTop = savedScroll;
+
+    // Ширина таблицы: если суммарные ширины столбцов больше контейнера — даём горизонтальный скролл,
+    // иначе растягиваем на всю ширину экрана (адаптив под ПК/ноутбук/планшет).
+    const table = c.querySelector('table');
+    if (table) {
+      let sumW = 0;
+      table.querySelectorAll('colgroup col').forEach(colEl => { sumW += parseFloat(colEl.style.width) || 0; });
+      const avail = c.clientWidth || window.innerWidth;
+      table.style.width = sumW > avail ? sumW + 'px' : '100%';
+    }
+
+    applyStickyOffsets();
   }
 
   function switchTab(id, btn) {
     document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-    document.getElementById('tab-' + id).style.display = 'block';
+    const tc = document.getElementById('tab-' + id);
+    tc.style.display = 'flex';
     btn.classList.add('active');
+    if (id === 'gantt') bindGanttSync();
+    // Таблица с table-layout:fixed пересчитывает ширину по ширине контейнера —
+    // после переключения вкладки принудительно перерисовываем её, чтобы не было «пустоты»
+    if (id === 'hier' && appData.rows.length) {
+      requestAnimationFrame(() => renderHier());
+    }
   }
 
   function buildOpts(list, current, empty = true) {
@@ -643,12 +1109,103 @@
     if (!hierTabVisible) {
       document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById('tab-hier').style.display = 'block';
+      document.getElementById('tab-hier').style.display = 'flex';
       document.querySelectorAll('.tab-btn')[0].classList.add('active');
     }
     revealRow(r);
     renderHier();
-    setTimeout(() => scrollToRow(idx), 50);
+    // двойной requestAnimationFrame: ждём, пока браузер разложит таблицу после показа вкладки
+    requestAnimationFrame(() => requestAnimationFrame(() => scrollToRow(idx)));
+  }
+
+  // === ГАНТ: подсказки и переход к задаче в таблице ===
+  let ganttTasks = []; // текущие отрисованные задачи (для тултипов и кликов)
+
+  function showGTip(ev, t) {
+    const tip = document.getElementById('g-tip');
+    if (!tip || !t) return;
+    const resp = [t.resp, t.owner].filter(v => v && String(v).trim()).join(', ');
+    tip.innerHTML = `<b>${esc(t.name)}</b><br>` +
+      `👤 Ответственные: <span class="tip-resp">${esc(resp || 'не назначен')}</span><br>` +
+      `📅 ${fmtDate(t.start)} — ${fmtDate(t.end)} · Прогресс: ${t.progress}%<br>` +
+      `Статус: ${esc(t.status)}${t.stage ? '<br>Этап: ' + esc(t.stage) : ''}`;
+    tip.style.display = 'block';
+    moveGTip(ev);
+  }
+  function moveGTip(ev) {
+    const tip = document.getElementById('g-tip');
+    if (!tip || tip.style.display === 'none') return;
+    const pad = 14;
+    let x = ev.clientX + pad, y = ev.clientY + pad;
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    if (x + w > window.innerWidth - 8) x = ev.clientX - w - pad;
+    if (y + h > window.innerHeight - 8) y = ev.clientY - h - pad;
+    tip.style.left = Math.max(8, x) + 'px';
+    tip.style.top = Math.max(8, y) + 'px';
+  }
+  function hideGTip() {
+    const tip = document.getElementById('g-tip');
+    if (tip) tip.style.display = 'none';
+  }
+
+  function bindGanttSync() {
+    // Синхронизация вертикального скролла левой панели и временной шкалы
+    const wrap = document.querySelector('#gantt-root .gantt-wrap');
+    if (!wrap || wrap._synced) return;
+    wrap._synced = true;
+    const side = wrap.querySelector('.gantt-side');
+    const time = wrap.querySelector('.gantt-time');
+    if (side && time) {
+      side.addEventListener('scroll', () => { time.scrollTop = side.scrollTop; });
+      time.addEventListener('scroll', () => { side.scrollTop = time.scrollTop; });
+    }
+  }
+
+  function ganttBarClick(i) {
+    const t = ganttTasks[i];
+    if (!t) return;
+    // Переход к задаче в разделе «Таблица»: раскрыть цепочку, прокрутить и подсветить строку
+    revealByRow(t.rowIndex);
+  }
+
+  // === ГАНТ: ширина колонки названий (ручное изменение) ===
+  let gSideW = 280;
+  try { const v = parseInt(localStorage.getItem('ganttSideW')); if (v >= 140 && v <= 700) gSideW = v; } catch (e) {}
+  function getGSideW() { return gSideW; }
+
+  function startGResize(ev, handle, side) {
+    ev.preventDefault();
+    ev.stopPropagation();
+    const startX = ev.clientX != null ? ev.clientX : (ev.touches && ev.touches[0] ? ev.touches[0].clientX : 0);
+    const startW = side.getBoundingClientRect().width;
+    handle.classList.add('dragging');
+    document.body.style.userSelect = 'none';
+
+    function apply(w) {
+      w = Math.min(700, Math.max(140, Math.round(w)));
+      gSideW = w;
+      side.style.width = w + 'px';
+    }
+    function onMove(e) {
+      const x = e.clientX != null ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : startX);
+      apply(startW + (x - startX));
+    }
+    function onUp() {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.removeEventListener('touchmove', onTouchMove);
+      document.removeEventListener('touchend', onUp);
+      handle.classList.remove('dragging');
+      document.body.style.userSelect = '';
+      try { localStorage.setItem('ganttSideW', String(gSideW)); } catch (e) {}
+    }
+    function onTouchMove(e) {
+      if (e.touches && e.touches[0]) { e.preventDefault(); onMove({ clientX: e.touches[0].clientX }); }
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onUp);
   }
 
   function renderGantt() {
@@ -663,8 +1220,17 @@
       const start = parseRuDate(r['Старт']);
       const end = parseRuDate(r['Финиш']);
       if (!start || !end) return;
-      tasks.push({ name, lvl, start, end, status: r['Статус'] || 'Планируется', progress: parseInt(r['Прогресс']) || 0 });
+      tasks.push({
+        name, lvl, start, end,
+        status: r['Статус'] || 'Планируется',
+        progress: parseInt(r['Прогресс']) || 0,
+        resp: String(r['Ответственный'] || '').trim(),
+        owner: String(r['Владелец результата'] || '').trim(),
+        stage: String(r['Этап'] || '').trim(),
+        rowIndex: r._rowIndex
+      });
     });
+    ganttTasks = tasks;
 
     if (!tasks.length) { root.innerHTML = '<div class="loader">Нет задач с заполненными датами Старт и Финиш</div>'; return; }
 
@@ -693,7 +1259,7 @@
     document.getElementById('g-info').textContent = `${fmtDate(minD)} — ${fmtDate(maxD)} · ${tasks.length} задач`;
 
     let sideH = `<div class="g-row" style="height:36px;background:var(--bg)"></div>`;
-    tasks.forEach(t => { sideH += `<div class="g-row lvl-${t.lvl}" title="${esc(t.name)}">${esc(t.name)}</div>`; });
+    tasks.forEach((t, i) => { sideH += `<div class="g-row lvl-${t.lvl}" data-gi="${i}">${esc(t.name)}</div>`; });
 
     let headH = cells.map(c => `<div class="g-cell ${zoom} ${c.we ? 'we' : ''}" style="width:${c.w}px">${c.label}</div>`).join('');
 
@@ -707,21 +1273,50 @@
       else { left = (startOffset / 30.44) * 100; width = (duration / 30.44) * 100; }
 
       const cls = t.status === 'Готово' ? 'done' : t.status === 'В процессе' ? 'progress' : 'plan';
-      barsH += `<div class="g-bar ${cls}" style="left:${Math.max(0, left)}px;width:${Math.max(20, width)}px;top:${36 + i * rowH + 7}px" title="${esc(t.name)} · ${t.progress}%">
+      // Подсказка с Ответственными — через showGTip; клик — переход к задаче в «Таблице»
+      barsH += `<div class="g-bar ${cls}" data-gi="${i}" style="left:${Math.max(0, left)}px;width:${Math.max(20, width)}px;top:${36 + i * rowH + 7}px">
         <div class="g-bar-fill" style="width:${t.progress}%"></div>
         <div class="g-bar-label">${esc(t.name)}</div>
       </div>`;
     });
 
-    root.innerHTML = `<div class="gantt-wrap" style="height:${36 + tasks.length * rowH}px">
-      <div class="gantt-side">${sideH}</div>
+    root.innerHTML = `<div class="gantt-wrap">
+      <div class="g-side-box">
+        <div class="gantt-side" style="width:${getGSideW()}px">${sideH}</div>
+        <div class="g-resizer" title="Потяните, чтобы изменить ширину колонки названий"></div>
+      </div>
       <div class="gantt-time">
         <div style="width:${totalW}px">
           <div class="g-header">${headH}</div>
-          <div class="g-bar-wrap">${barsH}</div>
+          <div class="g-bar-wrap" style="position:relative;height:${tasks.length * rowH}px">${barsH}</div>
         </div>
       </div>
     </div>`;
+
+    // Ручка изменения ширины колонки названий в Ганте (сохраняется в localStorage)
+    const gRes = root.querySelector('.g-resizer');
+    const gSide = root.querySelector('.gantt-side');
+    if (gRes && gSide) {
+      gRes.addEventListener('mousedown', ev => startGResize(ev, gRes, gSide));
+      gRes.addEventListener('touchstart', ev => startGResize(ev, gRes, gSide), { passive: false });
+    }
+
+    // Навешиваем обработчики: тултип при наведении + переход по клику
+    root.querySelectorAll('.g-bar').forEach(el => {
+      const t = ganttTasks[+el.dataset.gi];
+      el.addEventListener('mouseenter', ev => showGTip(ev, t));
+      el.addEventListener('mousemove', moveGTip);
+      el.addEventListener('mouseleave', hideGTip);
+      el.addEventListener('click', () => { hideGTip(); ganttBarClick(+el.dataset.gi); });
+    });
+    // Строки левой панели — подсказка и клик как на баре
+    root.querySelectorAll('.g-row[data-gi]').forEach(el => {
+      const t = ganttTasks[+el.dataset.gi];
+      el.style.cursor = 'pointer';
+      el.title = t.resp ? 'Ответственные: ' + t.resp : 'Нет ответственных';
+      el.addEventListener('click', () => ganttBarClick(+el.dataset.gi));
+    });
+    bindGanttSync();
   }
 
   function upd(idx, col, val) {
@@ -736,8 +1331,18 @@
     return isNaN(dt) ? d : dt.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' });
   }
 
-  // Автозапуск
-  document.addEventListener('DOMContentLoaded', refreshData);
+  // Автозапуск: DOMContentLoaded + запасной вариант (script в конце body может отработать позже события)
+  function bootApp() { refreshData(); }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootApp);
+  } else {
+    bootApp();
+  }
+
+  // При изменении размера окна пересчитываем ширину таблицы и offsets закреплённых колонок
+  window.addEventListener('resize', () => {
+    if (appData.rows.length && document.getElementById('tab-hier').style.display !== 'none') renderHier();
+  });
 </script>
 </body>
 </html>
