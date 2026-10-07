@@ -20,8 +20,10 @@
     .tab-btn { padding: 8px 16px; border: none; background: transparent; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text2); cursor: pointer; white-space: nowrap; flex-shrink: 0; }
     .tab-btn.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); }
 
-    /* Вкладки растягиваем на всю доступную высоту до нижней границы экрана */
-    .tab-content { flex: 1; min-height: 0; display: none; flex-direction: column; }
+    /* Вкладки растягиваем на всю доступную высоту до нижней границы экрана.
+       ВАЖНО: hidden через класс, а не inline-стиль — иначе display:inline перечит и вкладка «не появляется» */
+    .tab-content { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+    .tab-content.hidden-tab { display: none !important; }
     .tab-content > .card { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 
     .btn { background: var(--blue); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
@@ -56,6 +58,12 @@
     th { text-align: left; padding: 10px 8px; color: var(--text2); font-weight: 600; border-bottom: 2px solid var(--border); white-space: nowrap; position: sticky; top: 0; background: var(--card); z-index: 5; overflow: hidden; text-overflow: ellipsis; height: 40px; }
     td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; }
 
+    /* ФОН ЗАГОЛОВКОВ: непрозрачный градиент вместо полупрозрачных фонов фильтров/ручек,
+       иначе при position:sticky просвечивающие элементы делали заголовки «невидимыми». */
+    thead th { background-image: linear-gradient(var(--card), var(--card)); }
+    thead th::after { content: ''; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; background: var(--border); pointer-events: none; }
+    th .f-icon, th .th-label { background: transparent !important; }
+
     /* Зебра: очень светло-серая заливка каждой второй строки для читаемости */
     tbody tr.hrow:nth-child(even) > td { background: #f6f7f9; }
     /* Этапы (уровень 1) всегда подсвечены чуть сильнее — визуально отделяем группы */
@@ -73,8 +81,7 @@
     th .th-label .f-on { color: var(--blue); opacity: 1; }
     th.sorted .th-label { color: var(--text); }
 
-    /* Визуальная иерархия: ОДНА служебная колонка с направляющими линиями
-       + кнопка «+/−» внутри ячейки «Название». Пустых колонок слева больше нет. */
+    /* Визуальная иерархия: служебная колонка-направляющая (в ней же кнопка +/−) + «№» + «Название». */
     th.col-guide, td.col-guide { padding: 0 !important; width: 26px; min-width: 26px; max-width: 26px; position: sticky; left: 0; z-index: 6; border-bottom: none !important; }
     /* Направляющие линии вложенности — рисуем на самой ячейке (div может схлопнуться по высоте) */
     td.col-guide div { display: none; }
@@ -82,27 +89,21 @@
     tr.lvl-3 > td.col-guide { border-left: 2px solid #cbd5e1; margin-left: 22px; }
     /* Фон закреплённых слева колонок: белый / зебра / hover — чтобы строки не сливались.
        ВАЖНО: !important — иначе правило "tr.lvl-1 > td" перекрывало фон и «дырки» ломали зебру */
-    th.col-guide, th.col-tw, th.col-num, th.col-name { background: var(--card); }
-    td.col-guide, td.col-tw, td.col-num, td.col-name { background: var(--card) !important; }
+    th.col-num, th.col-name { background: var(--card); }
+    td.col-guide, td.col-num, td.col-name { background: var(--card) !important; }
     tbody tr.hrow:nth-child(even) > td.col-guide,
-    tbody tr.hrow:nth-child(even) > td.col-tw,
     tbody tr.hrow:nth-child(even) > td.col-num,
     tbody tr.hrow:nth-child(even) > td.col-name { background: #f6f7f9 !important; }
     tbody tr.hrow:hover > td.col-guide,
-    tbody tr.hrow:hover > td.col-tw,
     tbody tr.hrow:hover > td.col-num,
     tbody tr.hrow:hover > td.col-name { background: #e3ebf7 !important; }
     /* Этапы (lvl-1): закреплённые колонки тоже должны быть подсвечены — иначе «белые дырки» */
     tbody tr.hrow.lvl-1 > td.col-guide,
-    tbody tr.hrow.lvl-1 > td.col-tw,
     tbody tr.hrow.lvl-1 > td.col-num,
     tbody tr.hrow.lvl-1 > td.col-name { background: #eef2f8 !important; }
     tbody tr.hrow.lvl-1:hover > td.col-guide,
-    tbody tr.hrow.lvl-1:hover > td.col-tw,
     tbody tr.hrow.lvl-1:hover > td.col-num,
     tbody tr.hrow.lvl-1:hover > td.col-name { background: #e3ebf7 !important; }
-    /* Колонка «+/−» убрана — кнопка раскрытия живёт внутри «Название» (см. .twisty) */
-    th.col-tw, td.col-tw { display: none; }
     /* Колонка «№» (колонка B листа «Таблица») — номер элемента структуры */
     th.col-num { left: 26px; z-index: 5; width: 58px; min-width: 58px; max-width: 58px; padding: 10px 4px !important; text-align: center; }
     td.col-num { left: 26px; width: 58px; min-width: 58px; max-width: 58px; text-align: center; padding: 4px !important; font-size: 11px; color: var(--text2); white-space: nowrap; }
@@ -213,6 +214,13 @@
     tbody tr.hrow.lvl-1 > td:not(.col-guide):not(.col-num):not(.col-name) { background: #eef2f8; }
     tbody tr.hrow:hover > td:not(.col-guide):not(.col-num):not(.col-name) { background: #e3ebf7; }
 
+    /* Надёжный фон sticky-заголовков: псевдоэлемент перекрывает ЛЮБОЕ наследование/перекрытие,
+       из-за которого заголовки могли «исчезать» (прозрачный th просвечивал строками tbody). */
+    thead th::before { content: ''; position: absolute; inset: 0; background: var(--card); z-index: -1; pointer-events: none; }
+    /* Ручка изменения ширины — поверх фона заголовка, но не перекрывает текст */
+    th .resizer { background: transparent; }
+    th .resizer:hover, th .resizer.dragging { background: rgba(37, 99, 235, .35); }
+
     .loader { text-align: center; padding: 40px; color: var(--text2); }
     .err { color: var(--red); font-weight: 500; }
 
@@ -280,15 +288,15 @@
         <span style="font-size:11px;color:var(--text2);margin-left:auto">Фильтр — клик по заголовку · ширина — тянем за край заголовка</span>
       </div>
       <div class="table-wrap" id="hier-table"><div class="loader">Загрузка...</div></div>
-      <div class="hier-cards" id="hier-cards" style="display:none"></div>
+      <div class="hier-cards" id="hier-cards"></div>
     </div>
   </div>
 
-  <div id="tab-kanban" class="tab-content" style="display:none">
+  <div id="tab-kanban" class="tab-content hidden-tab">
     <div class="kanban" id="kanban-board"><div class="loader">Загрузка...</div></div>
   </div>
 
-  <div id="tab-gantt" class="tab-content" style="display:none">
+  <div id="tab-gantt" class="tab-content hidden-tab">
     <div class="card">
       <div class="gantt-controls">
         <label>Масштаб:</label>
@@ -980,6 +988,11 @@
       ${fixedTh('col-num', '__NUM__', '№')}
       ${thHtml(NAME_COL, 'col-name')}</tr></thead><tbody>`;
 
+    // ВАЖНО: у закреплённых (sticky) колонок НЕ ставим overflow:hidden —
+    // в WebKit это ломает position:sticky (заголовки и колонки «уезжают» при скролле).
+    // Обрезка текста вместо CSS делает JS ниже (по фактическим ширинам colgroup).
+    const stickyFix = 'overflow:visible !important;text-overflow:clip !important';
+
     let cardsHtml = '';
 
     function renderRow(r) {
@@ -1050,13 +1063,46 @@
     }
 
     applyStickyOffsets();
+
+    // 1) Снимаем overflow:hidden с sticky-колонок (в WebKit он ломает position:sticky —
+    //    из-за этого заголовки и колонки «Название/№» могли не отображаться).
+    if (hierTabVisible()) {
+      c.querySelectorAll('.col-guide, .col-num, .col-name').forEach(el => { el.style.cssText += ';' + stickyFix; });
+
+      // 2) Обрезка текста в этих колонках — по фактическим ширинам colgroup (эмуляция ellipsis).
+      const widths = {};
+      table && table.querySelectorAll('colgroup col').forEach(colEl => {
+        widths[colEl.getAttribute('data-fkey')] = parseFloat(colEl.style.width) || 0;
+      });
+      if (widths['__NUM__']) {
+        c.querySelectorAll('td.col-num .row-num, th.col-num .th-label').forEach(el => {
+          el.textContent = fitText(el.textContent, widths['__NUM__'] - 12);
+        });
+      }
+      if (widths['__NAME__']) {
+        c.querySelectorAll('td.col-name .task-name').forEach(el => {
+          const tn = el.firstChild && el.firstChild.nodeType === 3 ? el.firstChild : null;
+          if (!tn) return;
+          const short = fitText(tn.nodeValue, widths['__NAME__'] - 46); // запас на кнопку +/− и бейдж
+          if (short !== tn.nodeValue) tn.nodeValue = short + '…';
+        });
+      }
+    }
+  }
+
+  // Простая эмуляция text-overflow: для sticky-колонок, где CSS overflow:hidden запрещён (ломает sticky)
+  function fitText(txt, maxPx) {
+    txt = String(txt == null ? '' : txt);
+    if (maxPx <= 10 || txt.length * 7.5 <= maxPx) return txt;
+    const maxChars = Math.max(3, Math.floor(maxPx / 7.5));
+    return txt.length > maxChars ? txt.substring(0, maxChars - 1) : txt;
   }
 
   function switchTab(id, btn) {
-    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden-tab'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     const tc = document.getElementById('tab-' + id);
-    tc.style.display = 'flex';
+    tc.classList.remove('hidden-tab');
     btn.classList.add('active');
     if (id === 'gantt') bindGanttSync();
     // Таблица с table-layout:fixed пересчитывает ширину по ширине контейнера —
@@ -1064,6 +1110,11 @@
     if (id === 'hier' && appData.rows.length) {
       requestAnimationFrame(() => renderHier());
     }
+  }
+
+  // Показана ли сейчас вкладка «Таблица»
+  function hierTabVisible() {
+    return !document.getElementById('tab-hier').classList.contains('hidden-tab');
   }
 
   function buildOpts(list, current, empty = true) {
@@ -1105,11 +1156,10 @@
     const r = appData.rows.find(x => x._rowIndex === idx);
     if (!r) return;
     // переход по позиции строки
-    const hierTabVisible = document.getElementById('tab-hier').style.display !== 'none';
-    if (!hierTabVisible) {
-      document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    if (!hierTabVisible()) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden-tab'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      document.getElementById('tab-hier').style.display = 'flex';
+      document.getElementById('tab-hier').classList.remove('hidden-tab');
       document.querySelectorAll('.tab-btn')[0].classList.add('active');
     }
     revealRow(r);
@@ -1341,7 +1391,19 @@
 
   // При изменении размера окна пересчитываем ширину таблицы и offsets закреплённых колонок
   window.addEventListener('resize', () => {
-    if (appData.rows.length && document.getElementById('tab-hier').style.display !== 'none') renderHier();
+    if (appData.rows.length && hierTabVisible()) renderHier();
+  });
+
+  // Закрытие выпадающего фильтра кликом в ЛЮБОМ месте страницы
+  // (ловим и mousedown, и touchstart — на мобильных click может не дойти до document)
+  ['mousedown', 'touchstart'].forEach(evtName => {
+    document.addEventListener(evtName, e => {
+      const menu = document.getElementById('filter-menu');
+      if (!menu || !menu.classList.contains('open')) return;
+      if (menu.contains(e.target)) return;                       // клик внутри самого фильтра
+      if (e.target.closest && e.target.closest('.th-label')) return; // клик по другому заголовку — openFilterMenu сам перезапустит меню
+      closeFilterMenu();
+    }, true);
   });
 </script>
 </body>
