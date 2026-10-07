@@ -433,22 +433,9 @@
     }
   }
 
-  // === СОСТОЯНИЕ ВИДИМОСТИ (ленивое раскрытие) ===
-  const visibleSet = new Set();
-
-  function computeVisibility() {
-    visibleSet.clear();
-    const walk = (key) => {
-      (childrenMap[key] || []).forEach(r => {
-        const k = rowKey(r);
-        if (visibleSet.has(k)) return; // защита от циклов
-        visibleSet.add(k);
-        if (expanded[k]) walk(k);
-      });
-    };
-    walk('R'); walk('X');
-  }
-
+  // === РАСКРЫТИЕ/СВОРАЧИВАНИЕ УЗЛА ===
+  // Каждый узел раскрывается и закрывается независимо от остальных:
+  // состояние хранится в объекте expanded по ключу строки.
   function toggleRow(key) {
     expanded[key] = !expanded[key];
     renderHier();
@@ -533,7 +520,6 @@
 
     // Сохраняем позицию скролла
     savedScroll = c.scrollTop;
-    computeVisibility();
 
     const roots = childrenMap['R'] || [];
     const orphans = childrenMap['X'] || [];
