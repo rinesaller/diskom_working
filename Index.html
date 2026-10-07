@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #f9fafb; --card: #ffffff; --border: #e5e7eb; --text: #111827; --text2: #6b7280; --blue: #2563eb; --green: #10b981; --yellow: #f59e0b; --red: #ef4444; --radius: 12px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { max-width: 100%; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+    /* Растягиваем приложение на всю ширину экрана (ПК, ноутбук, планшет, телефон) */
+    .app { width: 100%; max-width: 100%; margin: 0 auto; padding: 24px; }
+
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 12px; flex-wrap: wrap; }
+    .header h1 { font-size: 22px; font-weight: 600; }
+
+    .tabs { display: flex; gap: 4px; background: var(--card); padding: 4px; border-radius: 10px; border: 1px solid var(--border); width: fit-content; max-width: 100%; margin-bottom: 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .tab-btn { padding: 8px 16px; border: none; background: transparent; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text2); cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+    .tab-btn.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); }
+
+    .btn { background: var(--blue); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+    .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px; margin-bottom: 16px; min-width: 0; }
+    .debug-box { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 12px; border-radius: 8px; font-size: 12px; margin-bottom: 16px; display: none; word-break: break-word; }
+
+    /* === Таблица (сводная, с раскрытием через стрелку) === */
+    .table-tools { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+    .tool-btn { border: 1px solid var(--border); background: var(--card); color: var(--text2); padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: inherit; }
+    .tool-btn:hover { background: var(--bg); color: var(--text); }
+    .col-settings { position: relative; }
+    .col-panel { display: none; position: absolute; top: 34px; left: 0; z-index: 50; background: var(--card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 6px 20px rgb(0 0 0 / 0.12); padding: 12px; width: 240px; max-height: 320px; overflow-y: auto; }
+    .col-panel.open { display: block; }
+    .col-panel label { display: flex; gap: 8px; align-items: center; font-size: 12px; padding: 4px 0; cursor: pointer; color: var(--text); }
+    .table-wrap { overflow: auto; -webkit-overflow-scrolling: touch; max-height: 75vh; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 10px 8px; color: var(--text2); font-weight: 500; border-bottom: 1px solid var(--border); white-space: nowrap; position: sticky; top: 0; background: var(--card); z-index: 2; }
+    td { padding: 8px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr.hrow.hidden-row { display: none; }
+    tr.hrow.group-row > td { background: #fafafa; }
+    tr.hrow:hover > td { background: #f3f6fc; }
+
+    /* Визуальная иерархия: колонки-«отступы» + направляющие линии (как в сводных таблицах) */
+    th.indent, td.indent { padding: 0 !important; border-bottom: none !important; width: 24px; min-width: 24px; max-width: 24px; position: sticky; background: var(--card); }
+    td.indent div { height: 100%; min-height: 34px; border-left: 2px solid #e2e8f0; margin-left: 11px; }
+    td.col-i1 { left: 0; }
+    td.col-i2 { left: 24px; }
+    th.col-i1 { left: 0; z-index: 4; }
+    th.col-i2 { left: 24px; z-index: 4; }
+    th.col-name { left: 48px; z-index: 4; }
+    td.col-name { left: 48px; }
+    tr.lvl-1 > td.indent div { border-color: transparent; }
+    tr.lvl-2 > td.col-i2 div { border-color: #cbd5e1; }
+    tr.lvl-3 > td.col-i1 div { border-color: #e2e8f0; }
+    tr.lvl-3 > td.col-i2 div { border-color: #cbd5e1; }
+
+    .name-cell { display: flex; align-items: flex-start; gap: 6px; min-width: 200px; max-width: 420px; }
+    .twisty { border: none; background: transparent; cursor: pointer; font-size: 11px; line-height: 1.5; color: var(--text2); width: 18px; height: 18px; flex-shrink: 0; border-radius: 4px; padding: 0; margin-top: 1px; transition: transform .15s ease; }
+    .twisty:hover { background: var(--border); color: var(--text); }
+    .twisty.empty { visibility: hidden; cursor: default; }
+    .task-name { min-width: 0; word-break: break-word; }
+    .lvl-1 .task-name { font-weight: 600; font-size: 14px; }
+    .lvl-1 > td { background: #f8fafc; }
+    .lvl-2 .task-name { font-weight: 500; }
+    .lvl-3 .task-name { color: var(--text2); font-size: 12px; }
+    .child-count { display: inline-block; background: var(--bg); border: 1px solid var(--border); color: var(--text2); border-radius: 10px; padding: 0 7px; font-size: 10px; font-weight: 600; margin-left: 6px; vertical-align: 1px; }
+
+    .link-chip { display: inline-flex; align-items: center; gap: 4px; background: #eff6ff; color: #1d4ed8; border: none; border-radius: 10px; padding: 2px 8px; font-size: 11px; font-weight: 500; cursor: pointer; font-family: inherit; white-space: nowrap; max-width: 180px; }
+    .link-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .link-chip:hover { background: #dbeafe; }
+    .no-link { color: var(--text2); font-size: 11px; }
+    tr.hl-flash > td { animation: hlflash 2s ease-out; }
+    @keyframes hlflash { 0%, 60% { background: #fef9c3; } 100% { background: transparent; } }
+
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 500; }
+    .b-done { background: #d1fae5; color: #065f46; }
+    .b-progress { background: #dbeafe; color: #1e40af; }
+    .b-plan { background: #fef3c7; color: #92400e; }
+    select.inline { border: 1px solid transparent; background: transparent; padding: 4px 6px; border-radius: 6px; font-size: 12px; cursor: pointer; max-width: 150px; font-family: inherit; }
+    select.inline:hover, select.inline:focus { border-color: var(--border); background: var(--bg); outline: none; }
+    input.cell-input { border: 1px solid transparent; background: transparent; padding: 4px 6px; border-radius: 6px; font-size: 12px; width: 100%; max-width: 150px; font-family: inherit; }
+    input.cell-input:hover, input.cell-input:focus { border-color: var(--border); background: var(--bg); outline: none; }
+    textarea.cell-input { resize: vertical; min-height: 28px; }
+    a.doc-link { color: var(--blue); font-size: 12px; text-decoration: none; }
+    a.doc-link:hover { text-decoration: underline; }
+
+    /* Мобильный режим: карточки вместо широкой таблицы */
+    .hier-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+    .h-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; min-width: 0; }
+    .h-card.lvl-1 { border-left: 4px solid var(--blue); }
+    .h-card.lvl-2 { border-left: 4px solid var(--green); }
+    .h-card.lvl-3 { border-left: 4px solid var(--border); }
+    .hc-head { display: flex; align-items: flex-start; gap: 6px; margin-bottom: 8px; }
+    .hc-title { font-weight: 600; font-size: 13px; word-break: break-word; min-width: 0; }
+    .hc-sub { font-size: 11px; color: var(--text2); margin-bottom: 8px; word-break: break-word; }
+    .hc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; font-size: 12px; }
+    .hc-field label { display: block; font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: .03em; margin-bottom: 2px; }
+    .hc-full { grid-column: 1 / -1; }
+
+    /* Канбан */
+    .kanban { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .k-col { background: var(--bg); border-radius: var(--radius); padding: 14px; min-height: 300px; min-width: 0; }
+    .k-col h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; display: flex; justify-content: space-between; gap: 8px; }
+    .k-col h3 span { background: var(--border); padding: 2px 8px; border-radius: 10px; font-size: 11px; color: var(--text2); flex-shrink: 0; }
+    .k-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; box-shadow: 0 1px 2px rgb(0 0 0 / 0.05); cursor: pointer; min-width: 0; }
+    .k-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgb(0 0 0 / 0.05); }
+    .k-title { font-weight: 500; font-size: 13px; margin-bottom: 8px; word-break: break-word; }
+    .k-meta { font-size: 11px; color: var(--text2); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+
+    /* Гант */
+    .gantt-controls { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; }
+    .gantt-controls select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit; }
+    .gantt-wrap { display: flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--card); max-width: 100%; }
+    .gantt-side { width: 280px; min-width: 200px; flex-shrink: 0; border-right: 1px solid var(--border); overflow: hidden; }
+    .gantt-time { flex: 1; overflow-x: auto; position: relative; min-width: 0; }
+    .g-row { display: flex; height: 36px; border-bottom: 1px solid var(--border); align-items: center; padding: 0 12px; font-size: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .g-row.lvl-1 { font-weight: 600; background: #fafafa; }
+    .g-row.lvl-2 { padding-left: 24px; }
+    .g-row.lvl-3 { padding-left: 48px; color: var(--text2); font-size: 11px; }
+    .g-header { display: flex; height: 36px; border-bottom: 1px solid var(--border); background: var(--bg); font-size: 11px; font-weight: 600; color: var(--text2); }
+    .g-cell { flex-shrink: 0; border-right: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: center; }
+    .g-cell.day { width: 30px; } .g-cell.week { width: 60px; } .g-cell.month { width: 100px; }
+    .g-cell.we { background: #fafafa; }
+    .g-bar-wrap { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+    .g-bar { position: absolute; height: 22px; top: 7px; border-radius: 6px; pointer-events: auto; overflow: hidden; box-shadow: 0 1px 2px rgb(0 0 0 / 0.1); }
+    .g-bar:hover { transform: scale(1.02); z-index: 10; }
+    .g-bar.done { background: #d1fae5; border: 1px solid #10b981; }
+    .g-bar.progress { background: #dbeafe; border: 1px solid #2563eb; }
+    .g-bar.plan { background: #fef3c7; border: 1px solid #f59e0b; }
+    .g-bar-fill { position: absolute; top: 0; left: 0; bottom: 0; opacity: 0.35; }
+    .g-bar.done .g-bar-fill { background: #10b981; }
+    .g-bar.progress .g-bar-fill { background: #2563eb; }
+    .g-bar.plan .g-bar-fill { background: #f59e0b; }
+    .g-bar-label { position: relative; z-index: 2; padding: 0 8px; font-size: 10px; font-weight: 500; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Фиксация колонок иерархии и «Название» слева при широкой таблице */
+    th.col-name, td.col-name { position: sticky; z-index: 3; background: var(--card); }
+    tr.lvl-1 > td.col-name { background: #f8fafc; }
+    td.col-name { box-shadow: 2px 0 4px -2px rgb(0 0 0 / 0.08); }
+
+    .loader { text-align: center; padding: 40px; color: var(--text2); }
+    .err { color: var(--red); font-weight: 500; }
+
+    /* ============ АДАПТИВНОСТЬ ============ */
+    /* Ноутбук / небольшой ПК */
+    @media (max-width: 1200px) {
+      .app { padding: 16px; }
+      .gantt-side { width: 220px; min-width: 170px; }
+    }
+    /* Планшет */
+    @media (max-width: 900px) {
+      .kanban { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    /* Телефон */
+    @media (max-width: 768px) {
+      .app { padding: 12px; }
+      .header h1 { font-size: 18px; }
+      .kanban { grid-template-columns: 1fr; }
+      .gantt-side { width: 150px; min-width: 130px; }
+      .card { padding: 12px; }
+      .tabs { width: 100%; }
+      .tab-btn { flex: 1 0 auto; text-align: center; padding: 8px 12px; font-size: 13px; }
+    }
+    @media (max-width: 640px) {
+      /* широкая таблица -> карточки */
+      #hier-cards { display: block !important; }
+      #hier-table { display: none !important; }
+      .hier-cards { grid-template-columns: 1fr; }
+      /* на телефоне фиксация колонок не нужна — экономим место */
+      th.col-name, td.col-name, th.indent, td.indent { position: static; }
+      .table-wrap { max-height: none; }
+    }
+    @media (min-width: 641px) {
+      #hier-cards { display: none !important; }    /* карточки только на телефоне */
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>E-commerce Project 1.0</h1>
+    <button class="btn" onclick="refreshData()">↻ Обновить</button>
+  </div>
+
+  <div id="debug" class="debug-box"></div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('hier', this)">Таблица</button>
+    <button class="tab-btn" onclick="switchTab('kanban', this)">Канбан</button>
+    <button class="tab-btn" onclick="switchTab('gantt', this)">График Ганта</button>
+  </div>
+
+  <div id="tab-hier" class="tab-content">
+    <div class="card">
+      <div class="table-tools">
+        <button class="tool-btn" onclick="expandAll(true)">▼ Раскрыть все</button>
+        <button class="tool-btn" onclick="expandAll(false)">▶ Свернуть все</button>
+        <div class="col-settings">
+          <button class="tool-btn" onclick="toggleColPanel(event)">⚙ Столбцы</button>
+          <div class="col-panel" id="col-panel"></div>
+        </div>
+        <span style="font-size:11px;color:var(--text2);margin-left:auto">Клик по чипу связи — переход к связанной задаче</span>
+      </div>
+      <div class="table-wrap" id="hier-table"><div class="loader">Загрузка...</div></div>
+      <div class="hier-cards" id="hier-cards" style="display:none"></div>
+    </div>
+  </div>
+
+  <div id="tab-kanban" class="tab-content" style="display:none">
+    <div class="kanban" id="kanban-board"><div class="loader">Загрузка...</div></div>
+  </div>
+
+  <div id="tab-gantt" class="tab-content" style="display:none">
+    <div class="card">
+      <div class="gantt-controls">
+        <label>Масштаб:</label>
+        <select id="g-zoom" onchange="renderGantt()">
+          <option value="day">Дни</option>
+          <option value="week" selected>Недели</option>
+          <option value="month">Месяцы</option>
+        </select>
+        <span id="g-info" style="margin-left:auto;font-size:12px;color:var(--text2)"></span>
+      </div>
+      <div id="gantt-root"><div class="loader">Загрузка...</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let appData = { rows: [], options: {} };
+  let idMap = {};         // ID (колонка A) -> строка данных
+  let childrenMap = {};   // ID родителя -> [дочерние строки]
+  let expanded = {};      // состояние раскрытия: key -> true/false
+  let savedScroll = null; // позиция скролла при перерисовке
+
+  // === КОНФИГУРАЦИЯ СТОЛБЦОВ ===
+  // internal: true — служебные колонки (ID, ID Связи). Они НЕ показываются в таблице
+  // как отдельные столбцы и не участвуют в переключателе «Столбцы»,
+  // но используются для построения иерархии и связей.
+  const COL_CONFIG = [
+    { key: 'Статус',            render: 'status' },
+    { key: 'Прогресс',          render: 'progress' },
+    { key: 'Владелец результата', render: 'owner',   def: true },
+    { key: 'Ответственный',     render: 'resp',      def: true },
+    { key: 'Решающий',          render: 'text',      def: true },
+    { key: 'Информируемые',     render: 'text',      def: false },
+    { key: 'Старт',             render: 'date',      def: true },
+    { key: 'Финиш',             render: 'date',      def: true },
+    { key: '__GATE__',           render: 'gate',      label: 'Sprint / Gate', def: true },
+    { key: '__LINKS__',          render: 'links',     label: 'Связанные задачи', def: true },
+    { key: 'Блокер',            render: 'blocker',   def: true },
+    { key: 'Кем заблок.',       render: 'text',      def: false },
+    { key: 'С какого числа',    render: 'date',      def: false },
+    { key: 'Комментарий',       render: 'comment',   def: true },
+    { key: 'Вход инф.',         render: 'textarea',  def: false },
+    { key: 'Вход (ID)',         render: 'text',      def: false },
+    { key: 'Выход инф.',        render: 'textarea',  def: false },
+    { key: 'Выход (ID)',        render: 'text',      def: false },
+    { key: 'Документ',          render: 'doc',       def: false },
+  ];
+  // Служебные колонки (ID, ID Связи) скрыты в веб-приложении:
+  // они не выводятся столбцами и не показываются в названиях,
+  // но используются для построения иерархии Этап > Задача > Под-задача и связей.
+  let visibleCols = {}; // ключ -> bool (настраивается пользователем)
+  try { visibleCols = JSON.parse(localStorage.getItem('visibleCols') || '{}'); } catch (e) { visibleCols = {}; }
+  COL_CONFIG.forEach(c => { if (typeof visibleCols[c.key] !== 'boolean') visibleCols[c.key] = !!c.def; });
+
+  function saveVisibleCols() { try { localStorage.setItem('visibleCols', JSON.stringify(visibleCols)); } catch (e) {} }
+  function toggleColPanel(ev) { ev.stopPropagation(); document.getElementById('col-panel').classList.toggle('open'); }
+  document.addEventListener('click', e => {
+    const p = document.getElementById('col-panel');
+    if (p && p.classList.contains('open') && !p.contains(e.target)) p.classList.remove('open');
+  });
+  function renderColPanel() {
+    const p = document.getElementById('col-panel');
+    if (!p) return;
+    p.innerHTML = '<div style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px">Отображаемые столбцы</div>' +
+      COL_CONFIG.map(c => `<label><input type="checkbox" ${visibleCols[c.key] ? 'checked' : ''} onchange="setColVis('${c.key}', this.checked)"> ${esc(c.label || c.key)}</label>`).join('');
+  }
+  function setColVis(key, v) { visibleCols[key] = v; saveVisibleCols(); renderHier(); }
+
+  const esc = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+  function isUrl(u) { return /^https?:\/\//i.test(String(u || '').trim()); }
+
+  // === ПАРСЕР РОССИЙСКИХ ДАТ (01.07.2026) ===
+  function parseRuDate(str) {
+    if (!str) return null;
+    const parts = String(str).split('.');
+    if (parts.length === 3) {
+      return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
+    const d = new Date(str);
+    return isNaN(d) ? null : d;
+  }
+
+  function refreshData() {
+    const hier = document.getElementById('hier-table');
+    const debug = document.getElementById('debug');
+    hier.innerHTML = '<div class="loader">Проверка соединения...</div>';
+    debug.style.display = 'block';
+    debug.innerHTML = 'Подключение к серверу...';
+
+    google.script.run
+      .withSuccessHandler(pong => {
+        debug.innerHTML = '✅ Сервер отвечает. Загрузка данных...';
+        google.script.run
+          .withSuccessHandler(data => {
+            if (data && data._error) {
+              debug.innerHTML = `<span class="err">❌ ${esc(data._error)}</span><br>Проверьте имя вкладки (должно быть "Таблица") и наличие данных.`;
+              hier.innerHTML = '';
+              return;
+            }
+            if (!data || !data.rows) {
+              debug.innerHTML = '<span class="err">❌ Пустой ответ от сервера. Сделайте НОВОЕ развертывание!</span>';
+              return;
+            }
+            debug.style.display = 'none';
+            appData = data;
+            buildRelations();
+            renderHier();
+            renderKanban();
+            renderGantt();
+          })
+          .withFailureHandler(err => {
+            debug.innerHTML = `<span class="err">❌ Ошибка: ${esc(err.message)}</span>`;
+          })
+          .getProjectData();
+      })
+      .withFailureHandler(err => {
+        debug.innerHTML = `<span class="err">❌ Сервер недоступен. Вы сделали "Новую версию" при развертывании?</span><br>Детали: ${esc(err.message)}`;
+      })
+      .ping();
+  }
+
+  // === СВЯЗИ ПО ID ===
+  // Колонка A ("ID") — уникальный ID строки. Колонка W ("ID Связи") — ID родителя.
+  function getLinkIds(r) {
+    // Основной источник — колонка W "ID Связи". Поддерживаются значения "1; 5" и "1, 5".
+    let raw = String(r['ID Связи'] || '');
+    if (!raw.trim()) return [];
+    return raw.split(/[;,\s]+/).map(v => v.trim()).filter(v => v !== '');
+  }
+
+  // Иерархия для сводной таблицы: Этап > Задача > Под-задача + связи по ID (колонка W).
+  // Родителем задачи является СТРОКА этапа (у которой заполнен только "Этап"),
+  // родителем под-задачи — СТРОКА задачи (с совпадающими "Этап" и "Задача").
+  // Если такой строки-предка нет — строка показывается в корне списка.
+  function getParentKey(r) {
+    const lvl = getRowLevel(r);
+    if (lvl === 3) {
+      const task = appData.rows.find(x => x !== r && !x['Под-задача'] && x['Задача'] &&
+        x['Задача'] === r['Задача'] && (!r['Этап'] || x['Этап'] === r['Этап']));
+      return task ? rowKey(task) : 'R';
+    }
+    if (lvl === 2) {
+      const stage = appData.rows.find(x => x !== r && x['Этап'] === r['Этап'] && !x['Задача'] && !x['Под-задача']);
+      return stage ? rowKey(stage) : 'R';
+    }
+    if (lvl === 1 && r['Этап']) return 'R';
+    return 'X'; // без названия — корневая «висячая» строка
+  }
+
+  function rowKey(r) { return 'r' + r._rowIndex; }
+
+  function buildRelations() {
+    idMap = {};
+    childrenMap = {};
+    appData.rows.forEach(r => {
+      const id = String(r['ID'] || '').trim();
+      if (id && !idMap[id]) idMap[id] = r;
+    });
+    // Дети по дереву (для сворачивания)
+    appData.rows.forEach(r => {
+      const p = getParentKey(r);
+      (childrenMap[p] = childrenMap[p] || []).push(r);
+    });
+  }
+
+  function getRowName(r) { return r['Под-задача'] || r['Задача'] || r['Этап'] || '(без названия)'; }
+  function getRowLevel(r) {
+    if (r['Под-задача']) return 3;
+    if (r['Задача']) return 2;
+    return 1;
+  }
+
+  // Все связанные задачи: потомки по ID (кого привязали к этой строке) и предки по ID
+  function getLinkedTasks(r) {
+    const down = [], up = [];
+    const myId = String(r['ID'] || '').trim();
+    if (myId) {
+      appData.rows.forEach(x => {
+        if (x === r) return;
+        if (getLinkIds(x).indexOf(myId) !== -1) down.push({ row: x, dir: '↓' });
+      });
+    }
+    getLinkIds(r).forEach(lid => {
+      const p = idMap[lid];
+      if (p && p !== r) up.push({ row: p, dir: '↑' });
+    });
+    return { down, up };
+  }
+
+  // === НАВИГАЦИЯ ПО СВЯЗЯМ ===
+  function revealRow(r) {
+    // Раскрыть цепочку дерева (строки-предки: задача, этап) — getParentKey уже их находит
+    let cur = r, g0 = 0;
+    while (cur && g0++ < 50) {
+      const pk = getParentKey(cur);
+      expanded[pk] = true;
+      if (pk === 'R' || pk === 'X') break;
+      cur = appData.rows.find(x => rowKey(x) === pk);
+    }
+    // Раскрыть предков по ID-связям (колонка W "ID Связи")
+    let node = r, g2 = 0;
+    while (node && g2++ < 50) {
+      const lids = getLinkIds(node);
+      let parent = null;
+      for (const lid of lids) { if (idMap[lid]) { parent = idMap[lid]; break; } }
+      if (!parent || parent === node) break;
+      expanded[rowKey(parent)] = true;
+      node = parent;
+    }
+  }
+
+  function scrollToRow(idx) {
+    const el = document.querySelector('#hier-table tr[data-row="' + idx + '"]');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const el2 = document.querySelector('#hier-cards .h-card[data-row="' + idx + '"]');
+    if (el2) el2.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (el || el2) {
+      const t = el || el2;
+      t.classList.add('hl-flash');
+      setTimeout(() => t.classList.remove('hl-flash'), 2100);
+    }
+  }
+
+  // === СОСТОЯНИЕ ВИДИМОСТИ (ленивое раскрытие) ===
+  const visibleSet = new Set();
+
+  function computeVisibility() {
+    visibleSet.clear();
+    const walk = (key) => {
+      (childrenMap[key] || []).forEach(r => {
+        const k = rowKey(r);
+        if (visibleSet.has(k)) return; // защита от циклов
+        visibleSet.add(k);
+        if (expanded[k]) walk(k);
+      });
+    };
+    walk('R'); walk('X');
+  }
+
+  function toggleRow(key) {
+    expanded[key] = !expanded[key];
+    renderHier();
+  }
+
+  function expandAll(open) {
+    if (!open) { expanded = {}; }
+    else {
+      appData.rows.forEach(r => { expanded[rowKey(r)] = true; });
+    }
+    renderHier();
+  }
+
+  // === РЕДАКТИРУЕМЫЕ ПОЛЯ ===
+  function selCell(r, col, list, empty) {
+    return `<select class="inline" onchange="upd(${r._rowIndex},'${col}',this.value)">${buildOpts(list, r[col], empty)}</select>`;
+  }
+  function txtCell(r, col, area) {
+    const v = esc(r[col]);
+    if (area) return `<textarea class="cell-input" rows="1" onblur="cellBlur(this,${r._rowIndex},'${col}')">${v}</textarea>`;
+    return `<input class="cell-input" type="text" value="${v}" onblur="cellBlur(this,${r._rowIndex},'${col}')" onkeydown="if(event.key==='Enter'){this.blur()}">`;
+  }
+  function cellBlur(el, idx, col) {
+    const nv = el.value.trim();
+    const r = appData.rows.find(x => x._rowIndex === idx);
+    if (r && String(r[col] || '').trim() === nv) return; // значение не изменилось
+    upd(idx, col, nv);
+  }
+  function docCell(r) {
+    const v = String(r['Документ'] || '').trim();
+    if (!v) return txtCell(r, 'Документ');
+    if (isUrl(v)) return `<a class="doc-link" href="${esc(v)}" target="_blank" rel="noopener">📎 Открыть</a>`;
+    return txtCell(r, 'Документ');
+  }
+
+  function linkChip(row, dir) {
+    const nm = esc(getRowName(row).substring(0, 30));
+    // ID не показываем — только название связанной задачи; переход по внутреннему индексу строки
+    return `<button class="link-chip" title="${dir === '↑' ? 'Родитель:' : 'Связано с:'} ${esc(getRowName(row))}" onclick="revealByRow(${row._rowIndex})">${dir}<span>${nm}</span></button>`;
+  }
+
+  function linksCell(r) {
+    const { down, up } = getLinkedTasks(r);
+    if (!down.length && !up.length) return '<span class="no-link">—</span>';
+    const chips = [];
+    up.forEach(l => chips.push(linkChip(l.row, '↑')));
+    down.forEach(l => chips.push(linkChip(l.row, '↓')));
+    return `<div style="display:flex;flex-wrap:wrap;gap:4px">${chips.join('')}</div>`;
+  }
+
+  // === РЕНДЕР ЯЧЕЕК ПО ТИПУ СТОЛБЦА ===
+  function renderCell(r, c) {
+    switch (c.render) {
+      case 'status':   return selCell(r, 'Статус', appData.options.statuses, false);
+      case 'progress': return selCell(r, 'Прогресс', appData.options.progress, false);
+      case 'owner':    return selCell(r, 'Владелец результата', appData.options.employees, true);
+      case 'resp':     return selCell(r, 'Ответственный', appData.options.employees, true);
+      case 'blocker':  return selCell(r, 'Блокер', appData.options.departments, true);
+      case 'date':     return txtCell(r, c.key);
+      case 'text':     return txtCell(r, c.key);
+      case 'textarea': return txtCell(r, c.key, true);
+      case 'comment':  return txtCell(r, 'Комментарий', true);
+      case 'doc':      return docCell(r);
+      case 'gate': {
+        const g = r['Gate'], s = r['Sprint'];
+        if (String(g || '') !== '' && String(s || '') !== '') return esc(`${s} / ${g}`);
+        if (String(g || '') !== '') return txtCell(r, 'Gate');
+        if (String(s || '') !== '') return txtCell(r, 'Sprint');
+        return '<span class="no-link">—</span>';
+      }
+      case 'links':    return linksCell(r);
+      default:         return txtCell(r, c.key);
+    }
+  }
+
+  // === ОТРИСОВКА: СВОДНАЯ ТАБЛИЦА ===
+  function renderHier() {
+    const c = document.getElementById('hier-table');
+    const cc = document.getElementById('hier-cards');
+    renderColPanel();
+    if (!appData.rows.length) { c.innerHTML = '<p style="padding:20px">Нет данных</p>'; cc.innerHTML = ''; return; }
+
+    // Сохраняем позицию скролла
+    savedScroll = c.scrollTop;
+    computeVisibility();
+
+    const roots = childrenMap['R'] || [];
+    const orphans = childrenMap['X'] || [];
+    const allTop = roots.concat(orphans);
+
+    // Защита от циклов в ID-связях (рекурсивный renderRow не должен зациклиться)
+    const renderedSet = new Set();
+
+    const activeCols = COL_CONFIG.filter(col => visibleCols[col.key]);
+    const colTitle = col => col.label || col.key;
+
+    let html = `<table><thead><tr>
+      <th class="indent col-i1"></th><th class="indent col-i2"></th>
+      <th class="col-name" style="min-width:260px">Название</th>`;
+    activeCols.forEach(col => { html += `<th>${esc(colTitle(col))}</th>`; });
+    html += `</tr></thead><tbody>`;
+
+    let cardsHtml = '';
+
+    function renderRow(r) {
+      const key = rowKey(r);
+      if (renderedSet.has(key)) return; // защита от циклов
+      renderedSet.add(key);
+      const lvl = getRowLevel(r);
+      const kids = childrenMap[key] || [];
+      const isOpen = !!expanded[key];
+      const twisty = kids.length
+        ? `<button class="twisty" title="${isOpen ? 'Свернуть' : 'Раскрыть'} вложенные задачи" onclick="toggleRow('${key}')">${isOpen ? '▼' : '▶'}</button>`
+        : `<span class="twisty empty"></span>`;
+      const name = esc(getRowName(r));
+      const stage = r['Этап'] && lvl > 1 ? `<div style="font-size:10px;color:var(--text2)">${esc(r['Этап'])}</div>` : '';
+      // Колонки-«отступы» со направляющими линиями — визуальная вложенность как в сводной таблице
+      const indentCells = `<td class="indent col-i1"><div></div></td><td class="indent col-i2"><div></div></td>`;
+      // Счётчик потомков у стрелки (видно, сколько задач скрыто)
+      const countBadge = kids.length && !isOpen ? `<span class="child-count">${kids.length}</span>` : '';
+
+      // ID (колонка A) и ID Связи (колонка W) НЕ отображаются — они служебные
+      html += `<tr class="hrow lvl-${lvl}" data-row="${r._rowIndex}">
+        ${indentCells}
+        <td class="col-name"><div class="name-cell">${twisty}<div class="task-name">${name}${countBadge}${stage}</div></div></td>`;
+      activeCols.forEach(col => { html += `<td>${renderCell(r, col)}</td>`; });
+      html += `</tr>`;
+
+      // Мобильная карточка (без ID)
+      cardsHtml += `<div class="h-card lvl-${lvl}" data-row="${r._rowIndex}" style="margin-left:${(lvl - 1) * 8}px">
+        <div class="hc-head">${twisty}<div>
+          <div class="hc-title">${name}${countBadge}</div>
+          ${stage}
+        </div></div>
+        <div class="hc-grid">
+          <div class="hc-field"><label>Статус</label>${selCell(r, 'Статус', appData.options.statuses, false)}</div>
+          <div class="hc-field"><label>Прогресс</label>${selCell(r, 'Прогресс', appData.options.progress, false)}</div>
+          <div class="hc-field"><label>Владелец</label>${selCell(r, 'Владелец результата', appData.options.employees, true)}</div>
+          <div class="hc-field"><label>Ответственный</label>${selCell(r, 'Ответственный', appData.options.employees, true)}</div>
+          <div class="hc-field"><label>Старт</label>${txtCell(r, 'Старт')}</div>
+          <div class="hc-field"><label>Финиш</label>${txtCell(r, 'Финиш')}</div>
+          <div class="hc-field hc-full"><label>Связанные задачи</label><div style="display:flex;flex-wrap:wrap;gap:4px">${linksCell(r)}</div></div>
+          <div class="hc-field"><label>Блокер</label>${selCell(r, 'Блокер', appData.options.departments, true)}</div>
+          <div class="hc-field hc-full"><label>Комментарий</label>${txtCell(r, 'Комментарий', true)}</div>
+        </div>
+      </div>`;
+
+      if (isOpen) kids.forEach(renderRow);
+    }
+
+    allTop.forEach(r => renderRow(r));
+
+    html += '</tbody></table>';
+    c.innerHTML = html;
+    cc.innerHTML = `<div class="hier-cards">${cardsHtml}</div>`;
+    c.scrollTop = savedScroll;
+  }
+
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + id).style.display = 'block';
+    btn.classList.add('active');
+  }
+
+  function buildOpts(list, current, empty = true) {
+    let h = empty ? '<option value="">—</option>' : '';
+    (list || []).forEach(v => { h += `<option value="${esc(v)}" ${v === current ? 'selected' : ''}>${esc(v)}</option>`; });
+    return h;
+  }
+
+  function renderKanban() {
+    const b = document.getElementById('kanban-board');
+    const cols = { 'В процессе': [], 'Планируется': [], 'Готово': [] };
+    appData.rows.forEach(r => {
+      const name = getRowName(r);
+      if (!name || (!r['Этап'] && !r['Задача'] && !r['Под-задача'])) return;
+      const s = r['Статус'] || 'Планируется';
+      (cols[s] || cols['Планируется']).push(r);
+    });
+    let html = '';
+    for (const [col, tasks] of Object.entries(cols)) {
+      html += `<div class="k-col"><h3>${col} <span>${tasks.length}</span></h3>`;
+      tasks.forEach(r => {
+        const name = getRowName(r);
+        const bCls = r['Статус'] === 'Готово' ? 'b-done' : r['Статус'] === 'В процессе' ? 'b-progress' : 'b-plan';
+        // ID в веб-приложении не показываем — переход по внутренней ссылке строки
+        html += `<div class="k-card" onclick="revealByRow(${r._rowIndex})">
+          <div class="k-title">${esc(name)}</div>
+          <div class="k-meta">
+            <span>👤 ${esc(r['Ответственный'] || '—')}</span>
+            <span class="badge ${bCls}">${esc(r['Прогресс'] || '0%')}</span>
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    b.innerHTML = html;
+  }
+
+  function revealByRow(idx) {
+    const r = appData.rows.find(x => x._rowIndex === idx);
+    if (!r) return;
+    // переход по позиции строки
+    const hierTabVisible = document.getElementById('tab-hier').style.display !== 'none';
+    if (!hierTabVisible) {
+      document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-hier').style.display = 'block';
+      document.querySelectorAll('.tab-btn')[0].classList.add('active');
+    }
+    revealRow(r);
+    renderHier();
+    setTimeout(() => scrollToRow(idx), 50);
+  }
+
+  function renderGantt() {
+    const root = document.getElementById('gantt-root');
+    const zoom = document.getElementById('g-zoom').value;
+    const rows = appData.rows.filter(r => r['Этап'] || r['Задача'] || r['Под-задача']);
+
+    const tasks = [];
+    rows.forEach(r => {
+      const name = getRowName(r);
+      const lvl = getRowLevel(r);
+      const start = parseRuDate(r['Старт']);
+      const end = parseRuDate(r['Финиш']);
+      if (!start || !end) return;
+      tasks.push({ name, lvl, start, end, status: r['Статус'] || 'Планируется', progress: parseInt(r['Прогресс']) || 0 });
+    });
+
+    if (!tasks.length) { root.innerHTML = '<div class="loader">Нет задач с заполненными датами Старт и Финиш</div>'; return; }
+
+    const minD = new Date(Math.min(...tasks.map(t => t.start.getTime())));
+    const maxD = new Date(Math.max(...tasks.map(t => t.end.getTime())));
+    minD.setDate(minD.getDate() - 3); maxD.setDate(maxD.getDate() + 3);
+    const totalDays = Math.ceil((maxD - minD) / 86400000) + 1;
+
+    let cells = [];
+    if (zoom === 'day') {
+      for (let i = 0; i < totalDays; i++) {
+        const d = new Date(minD); d.setDate(d.getDate() + i);
+        cells.push({ label: d.getDate() + '.' + (d.getMonth() + 1), w: 30, we: d.getDay() === 0 || d.getDay() === 6 });
+      }
+    } else if (zoom === 'week') {
+      let c = new Date(minD); c.setDate(c.getDate() - (c.getDay() === 0 ? 6 : c.getDay() - 1));
+      while (c <= maxD) { cells.push({ label: c.getDate() + '.' + (c.getMonth() + 1), w: 60, we: false }); c.setDate(c.getDate() + 7); }
+    } else {
+      let c = new Date(minD.getFullYear(), minD.getMonth(), 1);
+      const mNames = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+      while (c <= maxD) { cells.push({ label: mNames[c.getMonth()] + ' ' + c.getFullYear(), w: 100, we: false }); c.setMonth(c.getMonth() + 1); }
+    }
+
+    const totalW = cells.reduce((s, c) => s + c.w, 0);
+    const rowH = 36;
+    document.getElementById('g-info').textContent = `${fmtDate(minD)} — ${fmtDate(maxD)} · ${tasks.length} задач`;
+
+    let sideH = `<div class="g-row" style="height:36px;background:var(--bg)"></div>`;
+    tasks.forEach(t => { sideH += `<div class="g-row lvl-${t.lvl}" title="${esc(t.name)}">${esc(t.name)}</div>`; });
+
+    let headH = cells.map(c => `<div class="g-cell ${zoom} ${c.we ? 'we' : ''}" style="width:${c.w}px">${c.label}</div>`).join('');
+
+    let barsH = '';
+    tasks.forEach((t, i) => {
+      const startOffset = (t.start - minD) / 86400000;
+      const duration = (t.end - t.start) / 86400000 + 1;
+      let left, width;
+      if (zoom === 'day') { left = startOffset * 30; width = duration * 30; }
+      else if (zoom === 'week') { left = (startOffset / 7) * 60; width = (duration / 7) * 60; }
+      else { left = (startOffset / 30.44) * 100; width = (duration / 30.44) * 100; }
+
+      const cls = t.status === 'Готово' ? 'done' : t.status === 'В процессе' ? 'progress' : 'plan';
+      barsH += `<div class="g-bar ${cls}" style="left:${Math.max(0, left)}px;width:${Math.max(20, width)}px;top:${36 + i * rowH + 7}px" title="${esc(t.name)} · ${t.progress}%">
+        <div class="g-bar-fill" style="width:${t.progress}%"></div>
+        <div class="g-bar-label">${esc(t.name)}</div>
+      </div>`;
+    });
+
+    root.innerHTML = `<div class="gantt-wrap" style="height:${36 + tasks.length * rowH}px">
+      <div class="gantt-side">${sideH}</div>
+      <div class="gantt-time">
+        <div style="width:${totalW}px">
+          <div class="g-header">${headH}</div>
+          <div class="g-bar-wrap">${barsH}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function upd(idx, col, val) {
+    google.script.run.withSuccessHandler(r => {
+      if (r && r.success === false) console.warn('Не сохранено:', r.message);
+    }).updateCell(idx, col, val);
+  }
+
+  function fmtDate(d) {
+    if (!d) return '—';
+    const dt = parseRuDate(d) || new Date(d);
+    return isNaN(dt) ? d : dt.toLocaleDateString('ru-RU', { day: '2-digit', month: 'short' });
+  }
+
+  // Автозапуск
+  document.addEventListener('DOMContentLoaded', refreshData);
+</script>
+</body>
+</html>
