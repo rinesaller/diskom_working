@@ -258,12 +258,187 @@
     @media (min-width: 641px) {
       #hier-cards { display: none !important; }    /* карточки только на телефоне */
     }
+    /* ===== ИСПРАВЛЕНИЕ ШАПКИ ТАБЛИЦЫ =====
+       1) заголовки всех столбцов теперь выводятся (раньше рисовались только «№» и «Название»);
+       2) шапка всегда выше закреплённых ячеек тела таблицы (иначе при прокрутке «№»/«Название» перекрывали шапку). */
+    thead th { z-index: 10; top: 0; }
+    thead th.col-guide, thead th.col-num, thead th.col-name { z-index: 12; }
+    tbody td.col-guide, tbody td.col-num, tbody td.col-name { z-index: 4; }
+    thead th .th-label { display: inline-flex; max-width: calc(100% - 10px); }
+    thead th .th-label .th-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    textarea.cell-input { border: 1px solid transparent; background: transparent; padding: 4px 6px; border-radius: 6px; font-size: 12px; width: 100%; max-width: 150px; font-family: inherit; }
+    textarea.cell-input:hover, textarea.cell-input:focus { border-color: var(--border); background: var(--bg); outline: none; }
+
+    /* ===== Связи (чипы Вход/Выход) и статусы передачи ===== */
+    .rel-chip { display: inline-flex; align-items: center; gap: 4px; border: 1px solid #bfdbfe; background: #eff6ff; color: #1d4ed8; border-radius: 10px; padding: 2px 8px; font-size: 11px; cursor: pointer; font-family: inherit; max-width: 190px; }
+    .rel-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rel-chip.st-blocking { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+    .rel-chip.st-risk { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+    .rel-chip.st-done { background: #ecfdf5; border-color: #a7f3d0; color: #065f46; }
+    .st { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .st-planned.st { background: #e5e7eb; color: #374151; }
+    .st-done.st { background: #d1fae5; color: #065f46; }
+    .st-risk.st { background: #fef3c7; color: #92400e; }
+    .st-blocking.st { background: #fee2e2; color: #991b1b; }
+
+    /* ===== Сводная таблица связей (drill-down) ===== */
+    .pv-wrap { overflow: auto; flex: 1; min-height: 0; }
+    table.pv { table-layout: auto; min-width: 900px; }
+    table.pv th { top: 0; z-index: 10; }
+    table.pv th.pv-name, table.pv td.pv-name { position: sticky; left: 0; min-width: 300px; max-width: 420px; background: var(--card); z-index: 11; }
+    table.pv td.pv-name { z-index: 4; }
+    table.pv td { white-space: nowrap; }
+    table.pv td.pv-name { white-space: normal; }
+    table.pv tr.lvl-1 > td { background: #eef2f8; }
+    table.pv tr.lvl-1 > td.pv-name { background: #eef2f8; font-weight: 600; }
+    table.pv tr.lvl-3 > td.pv-name { color: var(--text2); }
+    table.pv td.num, table.pv th.num { text-align: center; }
+    .cnt { display: inline-block; min-width: 22px; padding: 1px 7px; border-radius: 10px; font-size: 11px; font-weight: 700; background: var(--bg); border: 1px solid var(--border); }
+    .cnt-red { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+    .cnt-amber { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+    .rel-toggle { border: 1px solid var(--border); background: var(--card); border-radius: 6px; font-size: 12px; cursor: pointer; padding: 0 6px; margin-left: auto; flex-shrink: 0; color: var(--text2); }
+    .rel-toggle.on, .rel-toggle:hover { background: #eff6ff; color: var(--blue); border-color: var(--blue); }
+    tr.pv-rel > td { background: #f8fafc !important; white-space: normal !important; padding: 8px 8px 12px 40px; }
+    .pv-rel-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+    .pv-rel-box h4 { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--text2); margin-bottom: 6px; }
+    .pv-rel-item { font-size: 12px; padding: 6px 0; border-bottom: 1px dashed var(--border); display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+    .pv-rel-item .info { color: var(--text2); flex-basis: 100%; }
+
+    /* ===== Обмен информацией ===== */
+    .ex-tools { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
+    .ex-tools select { padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit; }
+    .ex-root { overflow: auto; flex: 1; min-height: 0; }
+    .ex-section { margin-bottom: 24px; }
+    .ex-section h3 { font-size: 14px; margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }
+    table.ex { table-layout: auto; min-width: 860px; }
+    table.ex th { position: static; height: auto; white-space: nowrap; }
+    table.ex td { vertical-align: top; white-space: normal; }
+    .ex-sub { font-size: 10px; color: var(--text2); }
+    .warn-box { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 10px 12px; border-radius: 8px; font-size: 12px; margin-bottom: 12px; }
+    .empty-note { padding: 24px; text-align: center; color: var(--text2); }
+
+    /* ===== Гант: триггеры и блокеры ===== */
+    .g-chk { display: inline-flex; gap: 4px; align-items: center; font-size: 13px; cursor: pointer; }
+    .g-legend { font-size: 11px; color: var(--text2); display: inline-flex; gap: 12px; flex-wrap: wrap; }
+    .g-header { position: sticky; top: 0; z-index: 20; }
+    .gantt-side > .g-row:first-child { position: sticky; top: 0; z-index: 20; }
+    .g-bar-wrap { background-image: linear-gradient(var(--border) 1px, transparent 1px); background-size: 100% 36px; background-position: 0 35px; }
+    .g-bar.blocked { outline: 2px solid var(--red); outline-offset: 0; }
+    .g-flag { position: absolute; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; background: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / .3); pointer-events: auto; cursor: pointer; z-index: 12; }
+    .g-flag.blk { border: 2px solid var(--red); }
+    .g-flag.trg { border: 2px solid var(--yellow); }
+    .g-flag.trg.crit { border-color: var(--red); background: #fee2e2; }
+    .g-mk { position: absolute; height: 22px; display: flex; align-items: center; gap: 4px; z-index: 11; pointer-events: none; }
+    .g-pill { height: 20px; line-height: 18px; padding: 0 8px; border-radius: 10px; font-size: 10px; font-weight: 600; white-space: nowrap; pointer-events: auto; cursor: pointer; }
+    .g-pill.blk { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+    .g-pill.trg { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+    .g-pill.trg.crit { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .g-today { position: absolute; top: 0; width: 0; border-left: 2px dashed var(--blue); opacity: .6; pointer-events: none; z-index: 9; }
+    .g-links { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 8; overflow: visible; }
+    .g-tip .tip-blk { color: #fca5a5; font-weight: 700; }
+    .g-tip .tip-trg { color: #fcd34d; font-weight: 700; }
+    /* ===== Заголовок: выбор проекта ===== */
+    .proj-pick { position: relative; display: flex; align-items: center; gap: 6px; }
+    .proj-pick h1 { cursor: default; }
+    .proj-arrow { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: 1px solid var(--border); background: var(--card); color: var(--text2); border-radius: 8px; cursor: pointer; transition: all .15s; }
+    .proj-arrow:hover, .proj-arrow.open { color: var(--blue); border-color: var(--blue); background: #eff6ff; }
+    .proj-arrow svg { transition: transform .15s; }
+    .proj-arrow.open svg { transform: rotate(180deg); }
+    .proj-menu { display: none; position: absolute; top: 100%; left: 0; margin-top: 6px; z-index: 300; min-width: 240px; max-height: 320px; overflow-y: auto; background: var(--card); border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 8px 24px rgb(0 0 0 / 0.15); padding: 6px; }
+    .proj-menu.open { display: block; }
+    .proj-item { display: block; width: 100%; text-align: left; border: none; background: transparent; padding: 8px 10px; border-radius: 6px; font-size: 14px; font-family: inherit; color: var(--text); cursor: pointer; }
+    .proj-item:hover { background: var(--bg); }
+    .proj-item.on { background: #eff6ff; color: var(--blue); font-weight: 600; }
+
+    /* ===== Легенда, подвал, документ ===== */
+    .legend { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; font-size: 11px; color: var(--text2); margin-bottom: 10px; flex-shrink: 0; }
+    .legend .rel-chip { cursor: default; max-width: none; white-space: nowrap; }
+    .legend-note { margin-left: auto; }
+    .doc-text { font-size: 12px; color: var(--text2); }
+    .app-footer { flex-shrink: 0; text-align: center; font-size: 11px; color: #b6bbc4; padding: 6px 0 10px; letter-spacing: .02em; }
+
+    /* ===== Канбан: прокрутка вниз ===== */
+    #kanban-board { flex: 1; min-height: 0; overflow-y: auto; align-content: start; padding-bottom: 12px; -webkit-overflow-scrolling: touch; }
+
+    /* ===== Закреплённые 3 первых столбца (guide, №, Название) ===== */
+    th.col-guide, td.col-guide, th.col-num, td.col-num, th.col-name, td.col-name { position: -webkit-sticky; position: sticky; }
+    td.col-name, th.col-name { border-right: 1px solid var(--border); }
+
+    /* ===== Гант: ползунки ===== */
+    .g-slider { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; color: var(--text2); }
+    .g-slider input[type=range] { width: 110px; accent-color: var(--blue); }
+    .g-slider b { min-width: 34px; color: var(--text); font-weight: 600; }
+    .g-num { color: var(--text2); font-variant-numeric: tabular-nums; margin-right: 6px; font-weight: 500; }
+    /* ===== Панель таблицы и легенда справа от кнопок ===== */
+    .legend { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 11px; color: var(--text2); margin: 0 0 0 4px; padding-left: 12px; border-left: 1px solid var(--border); }
+    .tools-hint { font-size: 11px; color: var(--text2); margin-left: auto; }
+    @media (max-width: 1100px) { .tools-hint { display: none; } }
+
+    /* ===== Гант: плановые этапы (светло-серые) ===== */
+    .g-stage-sp { position: sticky; top: 36px; z-index: 19; background: #f3f4f6 !important; color: #9ca3af; font-size: 10px !important; text-transform: uppercase; letter-spacing: .05em; }
+    .g-stages { position: sticky; top: 36px; z-index: 19; background: #f9fafb; border-bottom: 1px solid var(--border); overflow: hidden; }
+    .g-stage { position: absolute; top: 4px; height: 16px; background: #eceff3; border: 1px dashed #c3c9d3; border-radius: 4px; color: #6b7280; font-size: 10px; font-weight: 600; line-height: 14px; padding: 0 6px; overflow: hidden; white-space: nowrap; }
+    .g-stage span { display: block; overflow: hidden; text-overflow: ellipsis; }
+    .g-sdot { position: absolute; top: 8px; width: 8px; height: 8px; border-radius: 50%; background: #fff; border: 2px solid #b4bbc7; }
+    .g-sdia { position: absolute; top: 7px; width: 10px; height: 10px; background: #fff; border: 2px solid #9ca3af; transform: rotate(45deg); }
+    .g-sband { position: absolute; top: 0; bottom: 0; background: rgba(148, 163, 184, .09); pointer-events: none; }
+    .g-sband.alt { background: rgba(148, 163, 184, .04); }
+    .g-sline { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dashed #c3c9d3; pointer-events: none; }
+    .g-legend-plan { color: #9ca3af; }
+    .ex-result { white-space: pre-wrap; }
+    /* плановые даты задач — светло-серые маркеры */
+    .g-plan { position: absolute; height: 22px; display: flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: #9ca3af; z-index: 10; pointer-events: auto; cursor: default; white-space: nowrap; }
+    .g-plan i { width: 8px; height: 8px; background: #fff; border: 2px solid #b4bbc7; transform: rotate(45deg); flex-shrink: 0; }
+    .g-plan b { width: 8px; height: 8px; border-radius: 50%; background: #fff; border: 2px solid #b4bbc7; flex-shrink: 0; }
+    .g-plan.beg { width: 46px; justify-content: flex-end; }
+    .g-sdate { position: absolute; top: 5px; font-style: normal; font-size: 10px; font-weight: 700; color: #9ca3af; white-space: nowrap; pointer-events: none; }
+    .g-stage.fut { background: #e7eaef; }
+
+    /* ===== Визуальная полировка ===== */
+    body { background: linear-gradient(180deg, #f8fafc 0%, #f1f4f9 100%); background-attachment: fixed; }
+    .card { box-shadow: 0 1px 3px rgb(16 24 40 / .06), 0 1px 2px rgb(16 24 40 / .04); }
+    .tabs { box-shadow: 0 1px 2px rgb(16 24 40 / .04); }
+    .tab-btn { transition: background .15s, color .15s; display: inline-flex; align-items: center; }
+    .tab-btn:hover { background: rgb(0 0 0 / .04); color: var(--text); }
+    .tab-btn.active { background: #eff6ff; color: var(--blue); font-weight: 600; box-shadow: inset 0 -2px 0 var(--blue); }
+    .tab-badge { background: var(--red); color: #fff; border-radius: 10px; font-size: 10px; font-weight: 700; padding: 1px 6px; margin-left: 6px; }
+    .btn { transition: background .15s, box-shadow .15s; box-shadow: 0 1px 2px rgb(37 99 235 / .3); }
+    .btn:hover { background: #1d4ed8; }
+    .tool-btn { transition: background .15s, color .15s, border-color .15s; }
+    .tool-btn:hover { border-color: #cbd5e1; }
+    button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+    select.inline.sel-done { background: #d1fae5; color: #065f46; border-radius: 12px; font-weight: 500; }
+    select.inline.sel-progress { background: #dbeafe; color: #1e40af; border-radius: 12px; font-weight: 500; }
+    select.inline.sel-plan { background: #fef3c7; color: #92400e; border-radius: 12px; font-weight: 500; }
+    tbody tr.hrow.lvl-1 > td.col-num { box-shadow: inset 3px 0 0 var(--blue); }
+    tbody tr.hrow.lvl-1 .task-name { letter-spacing: .005em; }
+    th { font-size: 12px; letter-spacing: .02em; }
+    .k-card { border-left: 4px solid var(--border); transition: transform .15s, box-shadow .15s; }
+    .k-card.k-done { border-left-color: var(--green); }
+    .k-card.k-progress { border-left-color: var(--blue); }
+    .k-card.k-plan { border-left-color: var(--yellow); }
+    .k-card:hover { box-shadow: 0 6px 14px rgb(16 24 40 / .08); }
+    table.ex tbody tr:nth-child(even) > td, table.pv tbody tr.pv-row:nth-child(even) > td { background-color: #fafbfc; }
+    table.ex tbody tr:hover > td { background: #f1f5fb; }
+    .loader::before { content: ''; display: block; width: 26px; height: 26px; margin: 0 auto 12px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    * { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; border: 2px solid transparent; background-clip: content-box; }
+    *::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: content-box; border: 2px solid transparent; }
   </style>
 </head>
 <body>
 <div class="app">
   <div class="header">
-    <h1>E-commerce Project 1.0</h1>
+    <div class="proj-pick" id="proj-pick">
+      <h1 id="proj-title" onclick="toggleProjMenu(event)">E-commerce Project 1.0</h1>
+      <button class="proj-arrow" id="proj-arrow" style="display:none" onclick="toggleProjMenu(event)" title="Выбрать проект" aria-label="Выбрать проект">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="proj-menu" id="proj-menu"></div>
+    </div>
     <button class="btn" onclick="refreshData()">↻ Обновить</button>
   </div>
 
@@ -271,6 +446,8 @@
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('hier', this)">Таблица</button>
+    <button class="tab-btn" onclick="switchTab('pivot', this)">Связи</button>
+    <button class="tab-btn" onclick="switchTab('exch', this)">Обмен<span class="tab-badge" id="ex-badge" style="display:none"></span></button>
     <button class="tab-btn" onclick="switchTab('kanban', this)">Канбан</button>
     <button class="tab-btn" onclick="switchTab('gantt', this)">График Ганта</button>
   </div>
@@ -285,10 +462,49 @@
           <div class="col-panel" id="col-panel"></div>
         </div>
         <button class="tool-btn" id="btn-clear-filters" style="display:none" onclick="clearAllFilters()">✕ Сбросить фильтры</button>
-        <span style="font-size:11px;color:var(--text2);margin-left:auto">Фильтр — клик по заголовку · ширина — тянем за край заголовка</span>
+        <div class="legend" id="rel-legend" title="Цвет чипов «← Получаем от» и «→ Передаем»">
+          <b>Связи:</b>
+          <span class="rel-chip">в плане</span>
+          <span class="rel-chip st-risk">риск срока</span>
+          <span class="rel-chip st-blocking">блокирует / ждут</span>
+          <span class="rel-chip st-done">передано</span>
+          <span class="rel-chip">👤 вне таблицы</span>
+        </div>
+        <span class="tools-hint">Фильтр — клик по заголовку · ширина — край заголовка</span>
       </div>
       <div class="table-wrap" id="hier-table"><div class="loader">Загрузка...</div></div>
       <div class="hier-cards" id="hier-cards"></div>
+    </div>
+  </div>
+
+  <div id="tab-pivot" class="tab-content hidden-tab">
+    <div class="card">
+      <div class="table-tools">
+        <button class="tool-btn" onclick="pvExpandAll(true)">▼ Раскрыть все</button>
+        <button class="tool-btn" onclick="pvExpandAll(false)">▶ Свернуть все</button>
+        <label class="g-chk"><input type="checkbox" id="pv-issues" onchange="pvOnlyIssues=this.checked;renderPivot()"> Только с блокерами / рисками</label>
+        <span style="font-size:11px;color:var(--text2);margin-left:auto">+ / − — раскрыть Этап → Задача → Под-задача · ⇄ — что приходит и куда уходит</span>
+      </div>
+      <div class="pv-wrap" id="pivot-table"><div class="loader">Загрузка...</div></div>
+    </div>
+  </div>
+
+  <div id="tab-exch" class="tab-content hidden-tab">
+    <div class="card">
+      <div class="ex-tools">
+        <label>Сотрудник:</label>
+        <select id="ex-person" onchange="setExPerson(this.value)"></select>
+        <select id="ex-state" onchange="exState=this.value;renderExchange()">
+          <option value="">Любой статус</option>
+          <option value="progress">⏳ В работе</option>
+          <option value="blocking">⛔ Блокирует</option>
+          <option value="risk">⚠ Риск срока</option>
+          <option value="planned">Запланировано</option>
+          <option value="done">Передано</option>
+        </select>
+        <span id="ex-info" style="margin-left:auto;font-size:12px;color:var(--text2)"></span>
+      </div>
+      <div class="ex-root" id="ex-root"><div class="loader">Загрузка...</div></div>
     </div>
   </div>
 
@@ -305,12 +521,29 @@
           <option value="week" selected>Недели</option>
           <option value="month">Месяцы</option>
         </select>
+        <label class="g-chk"><input type="checkbox" id="g-links" checked onchange="renderGantt()"> Стрелки связей</label>
+        <label class="g-chk"><input type="checkbox" id="g-stages" checked onchange="renderGantt()"> Плановые даты</label>
+        <label class="g-slider" title="Расстояние между строками (вехами) по вертикали">Интервал строк
+          <input type="range" id="g-rowh" min="36" max="120" step="4" value="36" oninput="ganttSlider()"><b id="g-rowh-v">36</b></label>
+        <label class="g-slider" title="Растяжение шкалы времени по горизонтали">Ширина шкалы
+          <input type="range" id="g-hk" min="50" max="300" step="10" value="100" oninput="ganttSlider()"><b id="g-hk-v">100%</b></label>
+        <select id="g-focus" onchange="renderGantt()">
+          <option value="">Все задачи</option>
+          <option value="issues">Только блокеры и триггеры</option>
+        </select>
+        <span class="g-legend">
+          <span>⛔ <b>Блокер</b> — задача стоит, кто/что мешает указано рядом</span>
+          <span>⚡ <b>Триггер</b> — от её завершения зависят другие (красный — уже ждут)</span>
+          <span class="g-legend-plan">◆ ┆ плановые даты и этапы (серый пунктир, ◆ — будущая дата)</span>
+          <span style="color:#dc2626">━▶ ждёт</span><span style="color:#d97706">━▶ риск срока</span><span style="color:#6b7280">━▶ в плане</span>
+        </span>
         <span id="g-info" style="margin-left:auto;font-size:12px;color:var(--text2)"></span>
       </div>
       <div id="gantt-root"><div class="loader">Загрузка...</div></div>
     </div>
   </div>
 </div>
+<footer class="app-footer">CapProject 2026-2027</footer>
 
 <!-- Всплывающая подсказка Ганта -->
 <div class="g-tip" id="g-tip"></div>
@@ -337,16 +570,14 @@
     { key: 'Информируемые',     render: 'text',      def: false },
     { key: 'Старт',             render: 'date',      def: true },
     { key: 'Финиш',             render: 'date',      def: true },
-    { key: '__GATE__',           render: 'gate',      label: 'Sprint / Gate', def: true },
-    { key: '__LINKS__',          render: 'links',     label: 'Связанные задачи', def: true },
+    { key: '__LINKS__',          render: 'links',     label: 'Связанные задачи', def: false },
     { key: 'Блокер',            render: 'blocker',   def: true },
     { key: 'Кем заблок.',       render: 'text',      def: false },
     { key: 'С какого числа',    render: 'date',      def: false },
     { key: 'Комментарий',       render: 'comment',   def: true },
-    { key: 'Вход инф.',         render: 'textarea',  def: false },
-    { key: 'Вход (ID)',         render: 'text',      def: false },
-    { key: 'Выход инф.',        render: 'textarea',  def: false },
-    { key: 'Выход (ID)',        render: 'text',      def: false },
+    { key: '__IN__',            render: 'relin',     label: '← Получаем от', def: true },
+    { key: '__OUT__',           render: 'relout',    label: '→ Передаем', def: true },
+    { key: 'Результат',         render: 'textarea',  def: true },
     { key: 'Документ',          render: 'doc',       def: false },
   ];
   // Служебные колонки (ID, ID Связи) скрыты в веб-приложении:
@@ -385,40 +616,97 @@
     return isNaN(d) ? null : d;
   }
 
-  function refreshData() {
+  function showMsg(html, isErr) {
+    const debug = document.getElementById('debug');
+    debug.style.display = 'block';
+    debug.innerHTML = isErr ? `<span class="err">${html}</span>` : html;
+    if (!isErr) setTimeout(() => { debug.style.display = 'none'; }, 4000);
+  }
+
+  // silent = true — перезагрузка данных без «Загрузка…» (после правок на вкладке «Обмен»)
+  // === ПРОЕКТЫ (колонка «Проекты» листа «Справочник») ===
+  let curProject = '';
+  try { curProject = localStorage.getItem('project') || ''; } catch (e) {}
+  function renderProjects() {
+    const list = (appData.options && appData.options.projects) || [];
+    const title = document.getElementById('proj-title');
+    const arrow = document.getElementById('proj-arrow');
+    const menu = document.getElementById('proj-menu');
+    if (!list.length) { arrow.style.display = 'none'; return; }
+    if (list.indexOf(curProject) === -1) curProject = list[0];
+    title.textContent = curProject;
+    title.style.cursor = 'pointer';
+    arrow.style.display = '';
+    menu.innerHTML = list.map(p => `<button class="proj-item${p === curProject ? ' on' : ''}" data-p="${esc(p)}">${esc(p)}</button>`).join('');
+  }
+  function toggleProjMenu(ev) {
+    ev.stopPropagation();
+    const menu = document.getElementById('proj-menu');
+    if (!menu.children.length) return;
+    const open = menu.classList.toggle('open');
+    document.getElementById('proj-arrow').classList.toggle('open', open);
+  }
+  function closeProjMenu() {
+    document.getElementById('proj-menu').classList.remove('open');
+    document.getElementById('proj-arrow').classList.remove('open');
+  }
+  document.getElementById('proj-menu').addEventListener('click', ev => {
+    const b = ev.target.closest('.proj-item');
+    if (!b) return;
+    curProject = b.dataset.p;
+    try { localStorage.setItem('project', curProject); } catch (e) {}
+    closeProjMenu();
+    refreshData();
+  });
+  document.addEventListener('click', closeProjMenu);
+
+  function refreshData(silent) {
+    silent = silent === true;
     const hier = document.getElementById('hier-table');
     const debug = document.getElementById('debug');
-    hier.innerHTML = '<div class="loader">Проверка соединения...</div>';
-    debug.style.display = 'block';
-    debug.innerHTML = 'Подключение к серверу...';
+    if (!silent) {
+      hier.innerHTML = '<div class="loader">Проверка соединения...</div>';
+      debug.style.display = 'block';
+      debug.innerHTML = 'Подключение к серверу...';
+    }
 
     google.script.run
       .withSuccessHandler(pong => {
-        debug.innerHTML = '✅ Сервер отвечает. Загрузка данных...';
+        if (!silent) debug.innerHTML = '✅ Сервер отвечает. Загрузка данных...';
         google.script.run
           .withSuccessHandler(data => {
             if (data && data._error) {
+              debug.style.display = 'block';
               debug.innerHTML = `<span class="err">❌ ${esc(data._error)}</span><br>Проверьте имя вкладки (должно быть "Таблица") и наличие данных.`;
               hier.innerHTML = '';
               return;
             }
             if (!data || !data.rows) {
+              debug.style.display = 'block';
               debug.innerHTML = '<span class="err">❌ Пустой ответ от сервера. Сделайте НОВОЕ развертывание!</span>';
               return;
             }
             debug.style.display = 'none';
             appData = data;
+            const requested = curProject;
+            renderProjects();
+            // проект по умолчанию выбран уже после ответа — перезагружаем с фильтром (только если есть колонка «Проект»)
+            if (curProject !== requested && data.headers.indexOf('Проект') >= 0) { refreshData(true); return; }
             buildRelations();
             renderHier();
+            renderPivot();
+            renderExchange();
             renderKanban();
             renderGantt();
           })
           .withFailureHandler(err => {
+            debug.style.display = 'block';
             debug.innerHTML = `<span class="err">❌ Ошибка: ${esc(err.message)}</span>`;
           })
-          .getProjectData();
+          .getProjectData(curProject);
       })
       .withFailureHandler(err => {
+        debug.style.display = 'block';
         debug.innerHTML = `<span class="err">❌ Сервер недоступен. Вы сделали "Новую версию" при развертывании?</span><br>Детали: ${esc(err.message)}`;
       })
       .ping();
@@ -505,6 +793,76 @@
       const p = getParentKey(r);
       (childrenMap[p] = childrenMap[p] || []).push(r);
     });
+    Object.keys(childrenMap).forEach(k => childrenMap[k].sort(numCmp));
+    computeStructNums();
+    buildEdgeIndex();
+  }
+
+  // Структурная нумерация: из колонки «№», а если её нет — по порядку в иерархии (1, 1.1, 1.2.1 …)
+  let structNums = {};
+  function computeStructNums() {
+    structNums = {};
+    if (treeMode) { appData.rows.forEach(r => { structNums[r._rowIndex] = normNum(r._num); }); return; }
+    const seen = new Set();
+    (function walk(list, prefix) {
+      list.forEach((r, i) => {
+        const k = rowKey(r);
+        if (seen.has(k)) return;
+        seen.add(k);
+        const n = prefix ? prefix + '.' + (i + 1) : String(i + 1);
+        structNums[r._rowIndex] = n;
+        walk(childrenMap[k] || [], n);
+      });
+    })(childrenMap['R'] || [], '');
+  }
+
+  // Порядок строк: по «№» (родитель перед потомками), иначе по порядку строк листа
+  function numCmp(a, b) {
+    if (!treeMode) return a._rowIndex - b._rowIndex;
+    const na = normNum(a._num), nb = normNum(b._num);
+    if (na && nb) {
+      const c = na.localeCompare(nb, 'ru', { numeric: true });
+      if (c !== 0) return c;
+    } else if (na) return -1; else if (nb) return 1;
+    return a._rowIndex - b._rowIndex;
+  }
+
+  // === ПЕРЕДАЧИ ИНФОРМАЦИИ («ID Связи», «От кого получаем инф.», «Кому передаем инф.») — считаются на сервере ===
+  // Конец связи может быть не строкой, а человеком/отделом: тогда srcRow/dstRow = null, имя — в srcName/dstName.
+  let edges = [], edgesIn = {}, edgesOut = {}, rowMap = {};
+  const STATE_TXT = { done: 'Передано', blocking: '⛔ Блокирует', risk: '⚠ Риск срока', planned: 'Запланировано' };
+  function buildEdgeIndex() {
+    edges = (appData.exchange && appData.exchange.edges) || [];
+    edgesIn = {}; edgesOut = {}; rowMap = {};
+    appData.rows.forEach(r => { rowMap[r._rowIndex] = r; });
+    edges.forEach((e, i) => {
+      e._i = i;
+      if (e.srcRow != null) (edgesOut[e.srcRow] = edgesOut[e.srcRow] || []).push(e);
+      if (e.dstRow != null) (edgesIn[e.dstRow] = edgesIn[e.dstRow] || []).push(e);
+    });
+  }
+  const stBadge = st => `<span class="st st-${st}">${STATE_TXT[st] || st}</span>`;
+  const peopleStr = a => (a && a.length) ? a.join(', ') : 'не назначен';
+  function splitPeople(v) { return String(v == null ? '' : v).split(/[;,]+/).map(x => x.trim()).filter(Boolean); }
+  function rowPeople(r) {
+    const p = splitPeople(r['Ответственный']);
+    return p.length ? p : splitPeople(r['Владелец результата']);
+  }
+
+  // Чипы «← от кого» / «→ кому» для столбцов Вход / Выход
+  function relCell(list, dir) {
+    if (!list || !list.length) return '<span class="no-link">—</span>';
+    return '<div style="display:flex;flex-wrap:wrap;gap:4px">' + list.map(e => {
+      const idx = dir === 'in' ? e.srcRow : e.dstRow;
+      const nm = dir === 'in' ? e.srcName : e.dstName;
+      const who = dir === 'in' ? e.from : e.to;
+      const tip = (dir === 'in' ? 'Получаю от: ' : 'Передаю: ') + nm + ' (' + peopleStr(who) + ')' +
+        (e.info ? ' — ' + e.info : '') + (e.reason ? '\n' + e.reason : '');
+      const lvl = (dir === 'in' ? e.srcLevel : e.dstLevel);
+      const ico = idx == null ? '👤' : (dir === 'in' ? '←' : '→');
+      const click = idx == null ? '' : `onclick="revealByRow(${idx})"`;
+      return `<button class="rel-chip st-${e.state}" title="${esc((lvl ? lvl + ': ' : '') + tip)}" ${click}>${ico}<span>${esc(nm.substring(0, 28))}</span></button>`;
+    }).join('') + '</div>';
   }
 
   // Отображаемый номер строки из колонки «№» (пусто, если колонки нет)
@@ -593,7 +951,8 @@
 
   // === РЕДАКТИРУЕМЫЕ ПОЛЯ ===
   function selCell(r, col, list, empty) {
-    return `<select class="inline" onchange="upd(${r._rowIndex},'${col}',this.value)">${buildOpts(list, r[col], empty)}</select>`;
+    const tint = col === 'Статус' ? (r[col] === 'Готово' ? ' sel-done' : r[col] === 'В процессе' ? ' sel-progress' : ' sel-plan') : '';
+    return `<select class="inline${tint}" onchange="upd(${r._rowIndex},'${col}',this.value)">${buildOpts(list, r[col], empty)}</select>`;
   }
   function txtCell(r, col, area) {
     const v = esc(r[col]);
@@ -606,18 +965,15 @@
     if (r && String(r[col] || '').trim() === nv) return; // значение не изменилось
     upd(idx, col, nv);
   }
+  // «Документ»: кликабельная ссылка, добавленная в Google Таблице (без редактирования в веб-версии)
   function docCell(r) {
-    const v = String(r['Документ'] || '').trim();
-    if (!v) return txtCell(r, 'Документ');
-    // Google Таблица может хранить ссылку как текст "Текст (https://...)" — выделяем URL
-    let url = null;
-    const m = v.match(/https?:\/\/[^\s)]+/i);
-    if (m) url = m[0];
-    if (url) {
-      const label = v.replace(url, '').replace(/[()\s]+$/g, '').trim() || 'Открыть документ';
-      return `<a class="doc-link" href="${esc(url)}" target="_blank" rel="noopener" title="${esc(url)}">📎 ${esc(label)}</a>`;
+    const url = String(r._docUrl || '').trim();
+    const text = String(r['Документ'] || '').trim();
+    if (/^https?:\/\//i.test(url)) {
+      const label = text && text !== url ? text : 'Открыть документ';
+      return `<a class="doc-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer" title="${esc(url)}">📎 ${esc(label)}</a>`;
     }
-    return txtCell(r, 'Документ');
+    return text ? `<span class="doc-text">${esc(text)}</span>` : '<span class="no-link">—</span>';
   }
 
   // === ФИЛЬТРЫ СТОЛБЦОВ ===
@@ -631,14 +987,11 @@
   function cellValueStr(r, c) {
     if (c.key === '__NAME__') return getRowName(r);
     if (c.key === '__NUM__') return displayNum(r); // колонка «№» листа «Таблица»
+    if (c.render === 'relin') return (edgesIn[r._rowIndex] || []).map(e => e.srcName).join(', ');
+    if (c.render === 'relout') return (edgesOut[r._rowIndex] || []).map(e => e.dstName).join(', ');
     if (c.render === 'links') {
       const { down, up } = getLinkedTasks(r);
       return down.concat(up).map(l => getRowName(l.row)).join(', ');
-    }
-    if (c.key === '__GATE__') {
-      const g = r['Gate'], s = r['Sprint'];
-      if (String(g || '') !== '' && String(s || '') !== '') return `${s} / ${g}`;
-      return String(g || s || '');
     }
     return String(r[c.key] == null ? '' : r[c.key]).trim();
   }
@@ -859,14 +1212,9 @@
       case 'textarea': return txtCell(r, c.key, true);
       case 'comment':  return txtCell(r, 'Комментарий', true);
       case 'doc':      return docCell(r);
-      case 'gate': {
-        const g = r['Gate'], s = r['Sprint'];
-        if (String(g || '') !== '' && String(s || '') !== '') return esc(`${s} / ${g}`);
-        if (String(g || '') !== '') return txtCell(r, 'Gate');
-        if (String(s || '') !== '') return txtCell(r, 'Sprint');
-        return '<span class="no-link">—</span>';
-      }
       case 'links':    return linksCell(r);
+      case 'relin':    return relCell(edgesIn[r._rowIndex], 'in');
+      case 'relout':   return relCell(edgesOut[r._rowIndex], 'out');
       default:         return txtCell(r, c.key);
     }
   }
@@ -875,7 +1223,7 @@
   const NAME_COL = { key: '__NAME__', label: 'Название', render: 'name' };
 
   // Дефолтные ширины служебных колонок (можно менять мышкой — сохранится в colWidths)
-  const GUIDE_W_DEF = 26, NUM_W_DEF = 58, NAME_W_DEF = 260;
+  const NUM_W_DEF = 58, NAME_W_DEF = 260;
 
   function thHtml(col, cls) {
     const key = col.key;
@@ -883,7 +1231,7 @@
     const sorted = sortState.key === key;
     const filtered = isFilterModified(key);
     return `<th class="${cls}${sorted ? ' sorted' : ''}" data-fkey="${key}">
-      <span class="th-label" onclick="openFilterMenu(event,'${key}')" title="Фильтр по столбцу «${title}»">${title}<span class="f-icon ${filtered ? 'f-on' : ''}">▼</span>${sorted ? `<span class="f-on">${sortState.dir === 1 ? '↑' : '↓'}</span>` : ''}</span>
+      <span class="th-label" onclick="openFilterMenu(event,'${key}')" title="Фильтр по столбцу «${title}»"><span class="th-text">${title}</span><span class="f-icon ${filtered ? 'f-on' : ''}">▼</span>${sorted ? `<span class="f-on">${sortState.dir === 1 ? '↑' : '↓'}</span>` : ''}</span>
       <span class="resizer" ontouchstart="startResize(event,'${key}')" onmousedown="startResize(event,'${key}')"></span>
     </th>`;
   }
@@ -891,7 +1239,7 @@
   // Служебные закреплённые колонки тоже можно расширять/сужать (хранится в colWidths)
   function fixedTh(cls, key, label) {
     const head = label
-      ? `<span class="th-label" onclick="openFilterMenu(event,'${key}')" title="Фильтр по столбцу «${label}»">${esc(label)}<span class="f-icon ${isFilterModified(key) ? 'f-on' : ''}">▼</span></span>`
+      ? `<span class="th-label" onclick="openFilterMenu(event,'${key}')" title="Фильтр по столбцу «${label}»"><span class="th-text">${esc(label)}</span><span class="f-icon ${isFilterModified(key) ? 'f-on' : ''}">▼</span></span>`
       : '';
     return `<th class="${cls}" data-fkey="${key}">${head}<span class="resizer" ontouchstart="startResize(event,'${key}')" onmousedown="startResize(event,'${key}')"></span></th>`;
   }
@@ -902,7 +1250,6 @@
 
   function buildColgroup(activeCols) {
     let cg = '<colgroup>';
-    cg += `<col data-fkey="__GUIDE__" style="width:${colW('__GUIDE__', GUIDE_W_DEF)}px">`;
     cg += `<col data-fkey="__NUM__" style="width:${colW('__NUM__', NUM_W_DEF)}px">`;
     cg += `<col data-fkey="__NAME__" style="width:${colW('__NAME__', NAME_W_DEF)}px">`;
     activeCols.forEach(c => {
@@ -917,11 +1264,8 @@
   function applyStickyOffsets() {
     const wrap = document.getElementById('hier-table');
     if (!wrap) return;
-    const gL = colW('__GUIDE__', GUIDE_W_DEF);
-    const numL = gL + colW('__NUM__', NUM_W_DEF);
-    const nameL = numL + colW('__NAME__', NAME_W_DEF);
-    wrap.querySelectorAll('th.col-guide, td.col-guide').forEach(el => el.style.left = '0px');
-    wrap.querySelectorAll('th.col-num, td.col-num').forEach(el => el.style.left = gL + 'px');
+    const numL = colW('__NUM__', NUM_W_DEF);
+    wrap.querySelectorAll('th.col-num, td.col-num').forEach(el => el.style.left = '0px');
     wrap.querySelectorAll('th.col-name, td.col-name').forEach(el => el.style.left = numL + 'px');
   }
 
@@ -984,9 +1328,9 @@
     if (btnCF) btnCF.style.display = anyFilter ? '' : 'none';
 
     let html = `<table>${buildColgroup(activeCols)}<thead><tr>
-      ${fixedTh('col-guide', '__GUIDE__', '')}
       ${fixedTh('col-num', '__NUM__', '№')}
-      ${thHtml(NAME_COL, 'col-name')}</tr></thead><tbody>`;
+      ${thHtml(NAME_COL, 'col-name')}
+      ${activeCols.map(col => thHtml(col, '')).join('')}</tr></thead><tbody>`;
 
     // ВАЖНО: у закреплённых (sticky) колонок НЕ ставим overflow:hidden —
     // в WebKit это ломает position:sticky (заголовки и колонки «уезжают» при скролле).
@@ -1008,8 +1352,8 @@
         : `<span class="twisty empty">+</span>`;
       const name = esc(getRowName(r));
       const stage = r['Этап'] && lvl > 1 ? `<div style="font-size:10px;color:var(--text2)">${esc(r['Этап'])}</div>` : '';
-      // Отступ вложенности — через padding ячейки направляющей (без лишних пустых колонок)
-      const guidePad = `<td class="col-guide" style="padding-left:${(lvl - 1) * 14}px"></td>`;
+      // Отступ вложенности — через padding ячейки «Название»
+      const indent = 8 + (lvl - 1) * 16;
       // Номер элемента структуры из колонки «№» листа «Таблица»
       const numHtml = displayNum(r) ? `<span class="row-num">${esc(displayNum(r))}</span>` : '';
       // Счётчик потомков у кнопки (видно, сколько задач скрыто)
@@ -1017,9 +1361,8 @@
 
       // ID (колонка A) и ID Связи (колонка W) НЕ отображаются — они служебные
       html += `<tr class="hrow lvl-${lvl}" data-row="${r._rowIndex}">
-        ${guidePad}
         <td class="col-num">${numHtml}</td>
-        <td class="col-name"><div class="name-cell">${twisty}<div class="task-name">${name}${countBadge}${stage}</div></div></td>`;
+        <td class="col-name" style="padding-left:${indent}px"><div class="name-cell">${twisty}<div class="task-name">${name}${countBadge}${stage}</div></div></td>`;
       activeCols.forEach(col => { html += `<td>${renderCell(r, col)}</td>`; });
       html += `</tr>`;
 
@@ -1036,6 +1379,8 @@
           <div class="hc-field"><label>Ответственный</label>${selCell(r, 'Ответственный', appData.options.employees, true)}</div>
           <div class="hc-field"><label>Старт</label>${txtCell(r, 'Старт')}</div>
           <div class="hc-field"><label>Финиш</label>${txtCell(r, 'Финиш')}</div>
+          <div class="hc-field hc-full"><label>← Получаем от</label>${relCell(edgesIn[r._rowIndex], 'in')}</div>
+          <div class="hc-field hc-full"><label>→ Передаем</label>${relCell(edgesOut[r._rowIndex], 'out')}</div>
           <div class="hc-field hc-full"><label>Связанные задачи</label><div style="display:flex;flex-wrap:wrap;gap:4px">${linksCell(r)}</div></div>
           <div class="hc-field"><label>Блокер</label>${selCell(r, 'Блокер', appData.options.departments, true)}</div>
           <div class="hc-field hc-full"><label>Комментарий</label>${txtCell(r, 'Комментарий', true)}</div>
@@ -1067,7 +1412,7 @@
     // 1) Снимаем overflow:hidden с sticky-колонок (в WebKit он ломает position:sticky —
     //    из-за этого заголовки и колонки «Название/№» могли не отображаться).
     if (hierTabVisible()) {
-      c.querySelectorAll('.col-guide, .col-num, .col-name').forEach(el => { el.style.cssText += ';' + stickyFix; });
+      c.querySelectorAll('.col-num, .col-name').forEach(el => { el.style.cssText += ';' + stickyFix; });
 
       // 2) Обрезка текста в этих колонках — по фактическим ширинам colgroup (эмуляция ellipsis).
       const widths = {};
@@ -1075,7 +1420,7 @@
         widths[colEl.getAttribute('data-fkey')] = parseFloat(colEl.style.width) || 0;
       });
       if (widths['__NUM__']) {
-        c.querySelectorAll('td.col-num .row-num, th.col-num .th-label').forEach(el => {
+        c.querySelectorAll('td.col-num .row-num').forEach(el => {
           el.textContent = fitText(el.textContent, widths['__NUM__'] - 12);
         });
       }
@@ -1083,7 +1428,8 @@
         c.querySelectorAll('td.col-name .task-name').forEach(el => {
           const tn = el.firstChild && el.firstChild.nodeType === 3 ? el.firstChild : null;
           if (!tn) return;
-          const short = fitText(tn.nodeValue, widths['__NAME__'] - 46); // запас на кнопку +/− и бейдж
+          const pad = parseFloat(el.closest('td').style.paddingLeft) || 8;
+          const short = fitText(tn.nodeValue, widths['__NAME__'] - 40 - pad); // запас на кнопку +/−, бейдж и отступ
           if (short !== tn.nodeValue) tn.nodeValue = short + '…';
         });
       }
@@ -1105,6 +1451,8 @@
     tc.classList.remove('hidden-tab');
     btn.classList.add('active');
     if (id === 'gantt') bindGanttSync();
+    if (id === 'pivot' && appData.rows.length) renderPivot();
+    if (id === 'exch' && appData.rows.length) renderExchange();
     // Таблица с table-layout:fixed пересчитывает ширину по ширине контейнера —
     // после переключения вкладки принудительно перерисовываем её, чтобы не было «пустоты»
     if (id === 'hier' && appData.rows.length) {
@@ -1139,7 +1487,7 @@
         const name = getRowName(r);
         const bCls = r['Статус'] === 'Готово' ? 'b-done' : r['Статус'] === 'В процессе' ? 'b-progress' : 'b-plan';
         // ID в веб-приложении не показываем — переход по внутренней ссылке строки
-        html += `<div class="k-card" onclick="revealByRow(${r._rowIndex})">
+        html += `<div class="k-card k-${bCls.slice(2)}" onclick="revealByRow(${r._rowIndex})">
           <div class="k-title">${esc(name)}</div>
           <div class="k-meta">
             <span>👤 ${esc(r['Ответственный'] || '—')}</span>
@@ -1168,17 +1516,260 @@
     requestAnimationFrame(() => requestAnimationFrame(() => scrollToRow(idx)));
   }
 
-  // === ГАНТ: подсказки и переход к задаче в таблице ===
+  // ============================================================
+  // СВОДНАЯ ТАБЛИЦА СВЯЗЕЙ (drill-down): Этап → Задача → Под-задача → связи
+  // ============================================================
+  let pvOpen = {};          // раскрытые узлы иерархии
+  let pvRel = {};           // раскрытые блоки «вход / выход» у строки
+  let pvOnlyIssues = false;
+
+  function pvToggle(k) { pvOpen[k] = !pvOpen[k]; renderPivot(); }
+  function pvToggleRel(k) { pvRel[k] = !pvRel[k]; renderPivot(); }
+  function pvExpandAll(open) {
+    pvOpen = {}; pvRel = {};
+    if (open) appData.rows.forEach(r => { pvOpen[rowKey(r)] = true; });
+    renderPivot();
+  }
+
+  // Итоги по узлу: сам узел + все его потомки
+  function pvRollup(r) {
+    const seen = new Set(), list = [];
+    (function walk(x) {
+      const k = rowKey(x);
+      if (seen.has(k)) return;
+      seen.add(k); list.push(x);
+      (childrenMap[k] || []).forEach(walk);
+    })(r);
+    const u = { n: list.length, inN: 0, outN: 0, blk: 0, risk: 0, trg: 0, prog: 0, start: null, finish: null };
+    let pSum = 0;
+    list.forEach(x => {
+      const ei = edgesIn[x._rowIndex] || [], eo = edgesOut[x._rowIndex] || [];
+      u.inN += ei.length; u.outN += eo.length;
+      if (ei.some(e => e.state === 'blocking')) u.blk++;
+      if (ei.some(e => e.state === 'risk')) u.risk++;
+      if (eo.some(e => e.state !== 'done')) u.trg++;
+      pSum += parseInt(x['Прогресс']) || 0;
+      const s = parseRuDate(x['Старт']), f = parseRuDate(x['Финиш']);
+      if (s && (!u.start || s < u.start)) u.start = s;
+      if (f && (!u.finish || f > u.finish)) u.finish = f;
+    });
+    u.prog = Math.round(pSum / list.length);
+    return u;
+  }
+
+  function pvRelList(list, dir) {
+    if (!list || !list.length) return '<div class="no-link">нет</div>';
+    return list.map(e => {
+      const idx = dir === 'in' ? e.srcRow : e.dstRow;
+      const nm = dir === 'in' ? e.srcName : e.dstName;
+      const who = dir === 'in' ? e.from : e.to;
+      const when = dir === 'in' ? ('до ' + (e.due || '—')) : ('нужно с ' + (e.need || '—'));
+      return `<div class="pv-rel-item">
+        <button class="link-chip" ${idx == null ? '' : `onclick="revealByRow(${idx})"`}><span>${idx == null ? '👤' : (dir === 'in' ? '←' : '→')} ${esc(nm)}</span></button>
+        ${(dir === 'in' ? e.srcLevel : e.dstLevel) ? `<span class="ex-sub">${esc(dir === 'in' ? e.srcLevel : e.dstLevel)}</span>` : ''}
+        <b>${esc(peopleStr(who))}</b> · ${esc(when)} ${stBadge(e.state)}
+        <div class="info">${e.info ? '📨 ' + esc(e.info) : '<i>информация не описана</i>'}${e.reason ? ' · ⚠ ' + esc(e.reason) : ''}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderPivot() {
+    const c = document.getElementById('pivot-table');
+    if (!c) return;
+    if (!appData.rows.length) { c.innerHTML = '<p style="padding:20px">Нет данных</p>'; return; }
+
+    const cache = {};
+    const ru = r => cache[rowKey(r)] || (cache[rowKey(r)] = pvRollup(r));
+    const seen = new Set();
+    const fmt = d => d ? d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '—';
+
+    let html = `<table class="pv"><thead><tr>
+      <th class="pv-name">Этап / Задача / Под-задача</th><th>Ответственный</th><th>Срок</th><th>Статус</th>
+      <th class="num">Прогресс</th><th class="num" title="Сколько передач информации приходит">← Получаем</th>
+      <th class="num" title="Сколько передач информации уходит дальше">→ Передаем</th>
+      <th class="num" title="Задач, которые ждут чужую информацию">⛔ Блокеры</th>
+      <th class="num" title="Задач, от завершения которых зависят другие">⚡ Триггеры</th></tr></thead><tbody>`;
+
+    function render(r) {
+      const key = rowKey(r);
+      if (seen.has(key)) return;
+      seen.add(key);
+      const u = ru(r);
+      if (pvOnlyIssues && !(u.blk || u.risk)) return;
+      const kids = childrenMap[key] || [];
+      const lvl = getDisplayLevel(r);
+      const open = !!pvOpen[key];
+      const ei = edgesIn[r._rowIndex] || [], eo = edgesOut[r._rowIndex] || [];
+      const tw = kids.length
+        ? `<button class="twisty" title="${open ? 'Свернуть' : 'Раскрыть'}" onclick="pvToggle('${key}')">${open ? '−' : '+'}</button>`
+        : '<span class="twisty empty">+</span>';
+      const relBtn = (ei.length || eo.length)
+        ? `<button class="rel-toggle ${pvRel[key] ? 'on' : ''}" title="Что приходит и что уходит" onclick="pvToggleRel('${key}')">⇄ ${ei.length}/${eo.length}</button>` : '';
+      const num = displayNum(r) ? `<span class="hc-num">${esc(displayNum(r))}</span>` : '';
+      const badge = kids.length && !open ? `<span class="child-count">${kids.length}</span>` : '';
+      const st = r['Статус'] || '';
+      const bCls = st === 'Готово' ? 'b-done' : st === 'В процессе' ? 'b-progress' : 'b-plan';
+      const term = (u.start || u.finish) ? `${fmt(u.start)} – ${fmt(u.finish)}` : '—';
+
+      html += `<tr class="hrow pv-row lvl-${lvl}">
+        <td class="pv-name" style="padding-left:${8 + (lvl - 1) * 18}px"><div class="name-cell">${tw}
+          <div class="task-name">${num}${esc(getRowName(r))}${badge}</div>${relBtn}</div></td>
+        <td>${esc(peopleStr(rowPeople(r)).replace('не назначен', '—'))}</td>
+        <td>${term}</td>
+        <td>${st ? `<span class="badge ${bCls}">${esc(st)}</span>` : '—'}</td>
+        <td class="num">${u.prog}%</td>
+        <td class="num">${u.inN || '—'}</td>
+        <td class="num">${u.outN || '—'}</td>
+        <td class="num">${u.blk ? `<span class="cnt cnt-red">${u.blk}</span>` : (u.risk ? `<span class="cnt cnt-amber" title="риск срока">${u.risk}</span>` : '—')}</td>
+        <td class="num">${u.trg ? `<span class="cnt cnt-amber">${u.trg}</span>` : '—'}</td></tr>`;
+
+      if (pvRel[key] && (ei.length || eo.length)) {
+        html += `<tr class="pv-rel"><td colspan="9"><div class="pv-rel-box">
+          <div><h4>← Получаем: что приходит и от кого</h4>${pvRelList(ei, 'in')}</div>
+          <div><h4>→ Передаем: что уходит дальше и кому</h4>${pvRelList(eo, 'out')}</div>
+        </div></td></tr>`;
+      }
+      if (open) kids.forEach(render);
+    }
+
+    (childrenMap['R'] || []).forEach(render);
+    html += '</tbody></table>';
+    if (!edges.length) {
+      html = '<div class="warn-box">Связей пока нет: заполните в листе «Таблица» столбцы «ID Связи», «От кого получаем инф.» / «Кому передаем инф.» (ID задач/этапов или ФИО через «;»).</div>' + html;
+    }
+    c.innerHTML = html;
+  }
+
+  // ============================================================
+  // ВКЛАДКА «ОБМЕН»: кто → что → кому, в разрезе задач и сроков
+  // ============================================================
+  let exPerson = '', exState = '';
+  try { exPerson = localStorage.getItem('exPerson') || ''; } catch (e) {}
+
+  function setExPerson(v) {
+    exPerson = v;
+    try { localStorage.setItem('exPerson', v); } catch (e) {}
+    renderExchange();
+  }
+
+  function exTaskCell(idx, name, stage, level) {
+    if (idx == null) return `<span>👤 ${esc(name)}</span><div class="ex-sub">вне задач таблицы</div>`;
+    return `<button class="link-chip" onclick="revealByRow(${idx})" title="${esc(name)}"><span>${esc(name)}</span></button>` +
+      `<div class="ex-sub">${esc([level, stage && stage !== name ? stage : ''].filter(Boolean).join(' · '))}</div>`;
+  }
+
+  // mode: 'in' — мне поступает, 'out' — я передаю, 'all' — общий список
+  function exTable(list, mode) {
+    if (!list.length) return '<div class="empty-note">Нет передач</div>';
+    const dueCmp = (a, b) => ((parseRuDate(a.due) || 0) - (parseRuDate(b.due) || 0)) || a.srcName.localeCompare(b.srcName, 'ru');
+    list = list.slice().sort(dueCmp);
+    const head = mode === 'in'
+      ? ['От кого', 'Что мне передают', 'Из задачи', 'В мою задачу', 'Передать до', 'Нужно к', 'Статус']
+      : mode === 'out'
+        ? ['Кому', 'Что я передаю', 'Из моей задачи', 'В задачу', 'Передать до', 'Нужно к', 'Статус']
+        : ['Кто передаёт', 'Что передаёт', 'Кому', 'Из задачи', 'В задачу', 'Передать до', 'Нужно к', 'Статус'];
+    const rows = list.map(e => {
+      const info = e.info ? `<div class="ex-result">${esc(e.info).replace(/\n/g, '<br>')}</div>` : '<i class="no-link">«Результат» не заполнен</i>';
+      const infoFull = info +
+        (e.reason ? `<div class="ex-sub" style="color:#b91c1c">⚠ ${esc(e.reason)}</div>` : '');
+      const src = exTaskCell(e.srcRow, e.srcName, e.srcStage, e.srcLevel);
+      const dst = exTaskCell(e.dstRow, e.dstName, e.dstStage, e.dstLevel);
+      const dates = `<td>${esc(e.due || '—')}</td><td>${esc(e.need || '—')}</td><td>${stBadge(e.state)}</td>`;
+      if (mode === 'in') {
+        return `<tr><td>${esc(peopleStr(e.from))}</td><td>${infoFull}</td><td>${src}</td><td>${dst}</td>${dates}</tr>`;
+      }
+      if (mode === 'out') {
+        return `<tr><td>${esc(peopleStr(e.to))}</td><td>${infoFull}</td><td>${src}</td><td>${dst}</td>${dates}</tr>`;
+      }
+      return `<tr><td>${esc(peopleStr(e.from))}</td><td>${infoFull}</td><td>${esc(peopleStr(e.to))}</td><td>${src}</td><td>${dst}</td>${dates}</tr>`;
+    }).join('');
+    return `<div style="overflow:auto"><table class="ex"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+
+  function exSection(title, list, mode) {
+    const blk = list.filter(e => e.state === 'blocking').length;
+    return `<div class="ex-section"><h3>${title} <span class="cnt">${list.length}</span>${blk ? `<span class="cnt cnt-red">⛔ ${blk}</span>` : ''}</h3>${exTable(list, mode)}</div>`;
+  }
+
+  function renderExchange() {
+    const root = document.getElementById('ex-root');
+    if (!root) return;
+    const sel = document.getElementById('ex-person');
+    const people = (appData.options && appData.options.people) || [];
+    if (exPerson && people.indexOf(exPerson) === -1) exPerson = '';
+    sel.innerHTML = '<option value="">Все сотрудники</option>' +
+      people.map(p => `<option value="${esc(p)}" ${p === exPerson ? 'selected' : ''}>${esc(p)}</option>`).join('');
+    document.getElementById('ex-state').value = exState;
+    const nBlk = edges.filter(e => e.state === 'blocking').length;
+    const bdg = document.getElementById('ex-badge');
+    bdg.textContent = nBlk; bdg.style.display = nBlk ? '' : 'none'; bdg.title = 'Передач блокирует: ' + nBlk;
+
+    const warnings = (appData.exchange && appData.exchange.warnings) || [];
+    let html = warnings.length
+      ? `<div class="warn-box"><b>Проверьте связи:</b><br>${warnings.slice(0, 10).map(esc).join('<br>')}${warnings.length > 10 ? '<br>…и ещё ' + (warnings.length - 10) : ''}</div>` : '';
+
+    const all = edges.filter(e => !exState || (exState === 'progress' ? e.srcStatus === 'В процессе' : e.state === exState));
+    document.getElementById('ex-info').textContent = `Всего передач: ${edges.length}`;
+
+    if (!edges.length) {
+      root.innerHTML = html + '<div class="empty-note">Передач информации нет.<br>Заполните в листе «Таблица» столбцы «ID Связи» (зависимость от других задач/этапов), «От кого получаем инф.» и «Кому передаем инф.» (ID или ФИО), а в «Результат» — что именно передаётся.</div>';
+      return;
+    }
+    if (exPerson) {
+      html += exSection('📥 Мне поступает', all.filter(e => e.to.indexOf(exPerson) !== -1), 'in');
+      html += exSection('📤 Я передаю дальше', all.filter(e => e.from.indexOf(exPerson) !== -1), 'out');
+    } else {
+      html += exSection('Все передачи информации', all, 'all');
+    }
+    root.innerHTML = html;
+  }
+
+  // ============================================================
+  // ГАНТ: подсказки, триггеры и блокеры
+  // ============================================================
   let ganttTasks = []; // текущие отрисованные задачи (для тултипов и кликов)
 
-  function showGTip(ev, t) {
+  // Блокеры и триггеры задачи.
+  //  Блокер  (⛔) — задача не готова, и её тормозит: (а) информация, которую не передали (связи «ID Связи» / «От кого получаем инф.»),
+  //                 (б) заполненные поля «Блокер» / «Кем заблок.».
+  //  Триггер (⚡) — задача не готова, а от её результата («Результат», «Кому передаем инф.») ждут другие задачи/этапы.
+  //                 Красный триггер — кто-то уже ждёт (просрочка или получатель стартовал).
+  function taskFlags(r) {
+    const res = { blk: [], blockers: [], trg: [], crit: false };
+    if (String(r['Статус'] || '').trim() === 'Готово') return res;
+    (edgesIn[r._rowIndex] || []).filter(e => e.state === 'blocking').forEach(e => {
+      res.blk.push(`Ждёт «${e.srcName}» от ${peopleStr(e.from)}${e.info ? ' — ' + e.info : ''} (${e.reason})`);
+      if (e.from.length) e.from.forEach(p => res.blockers.push(p)); else res.blockers.push(e.srcName);
+    });
+    const own = String(r['Блокер'] || '').trim(), by = String(r['Кем заблок.'] || '').trim();
+    const since = String(r['С какого числа'] || '').trim();
+    if (own || by) {
+      res.blk.push('Блокер: ' + [own, by].filter(Boolean).join(' / ') + (since ? ' (с ' + since + ')' : ''));
+      res.blockers.push(by || own);
+    }
+    res.trg = (edgesOut[r._rowIndex] || []).filter(e => e.state !== 'done');
+    res.crit = res.trg.some(e => e.state === 'blocking');
+    res.blockers = res.blockers.filter((v, i, a) => v && a.indexOf(v) === i);
+    return res;
+  }
+
+  function showGTip(ev, t, kind) {
     const tip = document.getElementById('g-tip');
     if (!tip || !t) return;
     const resp = [t.resp, t.owner].filter(v => v && String(v).trim()).join(', ');
-    tip.innerHTML = `<b>${esc(t.name)}</b><br>` +
+    let extra = '';
+    if (kind !== 'trg' && t.blk.length) {
+      extra += '<br><span class="tip-blk">⛔ Блокер:</span><br>' + t.blk.map(x => '• ' + esc(x)).join('<br>');
+    }
+    if (kind !== 'blk' && t.trg.length) {
+      extra += '<br><span class="tip-trg">⚡ Триггер — после завершения запускает:</span><br>' +
+        t.trg.map(e => `• ${esc(e.dstName)} (${esc(peopleStr(e.to))})${e.info ? ' — ' + esc(e.info) : ''}${e.state === 'blocking' ? ' — <b>уже ждёт</b>' : ''}`).join('<br>');
+      if (t.crit && !t.blk.length) extra += '<br><b>Первопричина задержки цепочки</b>';
+    }
+    tip.innerHTML = `<b>${t.num ? esc(t.num) + ' ' : ''}${esc(t.name)}</b><br>` +
       `👤 Ответственные: <span class="tip-resp">${esc(resp || 'не назначен')}</span><br>` +
       `📅 ${fmtDate(t.start)} — ${fmtDate(t.end)} · Прогресс: ${t.progress}%<br>` +
-      `Статус: ${esc(t.status)}${t.stage ? '<br>Этап: ' + esc(t.stage) : ''}`;
+      `Статус: ${esc(t.status)}${t.stage ? '<br>Этап: ' + esc(t.stage) : ''}${extra}`;
     tip.style.display = 'block';
     moveGTip(ev);
   }
@@ -1258,77 +1849,201 @@
     document.addEventListener('touchend', onUp);
   }
 
+  const G_EDGE_COLOR = { blocking: '#dc2626', risk: '#d97706', planned: '#9ca3af', done: '#86efac' };
+
   function renderGantt() {
     const root = document.getElementById('gantt-root');
     const zoom = document.getElementById('g-zoom').value;
-    const rows = appData.rows.filter(r => r['Этап'] || r['Задача'] || r['Под-задача']);
+    const hk = Math.max(0.5, (+document.getElementById('g-hk').value || 100) / 100);
+    const prevTime = root.querySelector('.gantt-time');
+    const prevScroll = prevTime ? { l: prevTime.scrollLeft, t: prevTime.scrollTop } : null;
+    const showLinks = document.getElementById('g-links').checked;
+    const showStages = document.getElementById('g-stages').checked;
+    const focus = document.getElementById('g-focus').value;
+    const rows = appData.rows.filter(r => r['Этап'] || r['Задача'] || r['Под-задача']).slice().sort(numCmp);
 
     const tasks = [];
     rows.forEach(r => {
-      const name = getRowName(r);
-      const lvl = getRowLevel(r);
       const start = parseRuDate(r['Старт']);
       const end = parseRuDate(r['Финиш']);
       if (!start || !end) return;
+      const fl = taskFlags(r);
+      if (focus === 'issues' && !fl.blk.length && !fl.trg.length) return;
       tasks.push({
-        name, lvl, start, end,
+        name: getRowName(r), num: structNums[r._rowIndex] || '', lvl: getDisplayLevel(r), start, end,
         status: r['Статус'] || 'Планируется',
         progress: parseInt(r['Прогресс']) || 0,
         resp: String(r['Ответственный'] || '').trim(),
         owner: String(r['Владелец результата'] || '').trim(),
         stage: String(r['Этап'] || '').trim(),
-        rowIndex: r._rowIndex
+        rowIndex: r._rowIndex,
+        blk: fl.blk, blockers: fl.blockers, trg: fl.trg, crit: fl.crit
       });
     });
     ganttTasks = tasks;
 
     if (!tasks.length) { root.innerHTML = '<div class="loader">Нет задач с заполненными датами Старт и Финиш</div>'; return; }
 
-    const minD = new Date(Math.min(...tasks.map(t => t.start.getTime())));
-    const maxD = new Date(Math.max(...tasks.map(t => t.end.getTime())));
-    minD.setDate(minD.getDate() - 3); maxD.setDate(maxD.getDate() + 3);
-    const totalDays = Math.ceil((maxD - minD) / 86400000) + 1;
+    // Плановые этапы: даты этапа (или, если не заполнены, охват всех его задач)
+    const stages = [];
+    if (showStages) {
+      appData.rows.forEach(r => {
+        if (getDisplayLevel(r) !== 1) return;
+        let st = parseRuDate(r['Старт']), en = parseRuDate(r['Финиш']);
+        if (!st || !en) { const u = pvRollup(r); st = st || u.start; en = en || u.finish; }
+        if (st && en) stages.push({ name: getRowName(r), num: structNums[r._rowIndex] || '', start: st, end: en });
+      });
+      stages.sort((a, b) => a.start - b.start);
+    }
+    const SH = stages.length ? 24 : 0;   // высота полосы этапов
+    const todayD = new Date(); todayD.setHours(0, 0, 0, 0);
+    const fmtShort = d => String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0');
+    const daysTo = d => Math.round((d - todayD) / 86400000);
 
-    let cells = [];
+    const minD = new Date(Math.min(...tasks.map(t => t.start.getTime()), ...stages.map(t => t.start.getTime())));
+    const maxD = new Date(Math.max(...tasks.map(t => t.end.getTime()), ...stages.map(t => t.end.getTime())));
+    minD.setDate(minD.getDate() - 3); maxD.setDate(maxD.getDate() + 3);
+
+    // Начало шкалы: для недель — понедельник, для месяцев — 1-е число (бары и ячейки совпадают)
+    let orig = new Date(minD);
+    if (zoom === 'week') orig.setDate(orig.getDate() - (orig.getDay() === 0 ? 6 : orig.getDay() - 1));
+    if (zoom === 'month') orig = new Date(minD.getFullYear(), minD.getMonth(), 1);
+
+    const DAY = 86400000;
+    function xOf(d) {
+      if (zoom === 'day') return Math.round((d - orig) / DAY) * 30 * hk;
+      if (zoom === 'week') return Math.round((d - orig) / DAY) / 7 * 60 * hk;
+      const mi = (d.getFullYear() - orig.getFullYear()) * 12 + d.getMonth() - orig.getMonth();
+      const dim = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+      return (mi + (d.getDate() - 1) / dim) * 100 * hk;
+    }
+    const nextDay = d => { const n = new Date(d); n.setDate(n.getDate() + 1); return n; };
+
+    const cells = [];
+    const mNames = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
     if (zoom === 'day') {
-      for (let i = 0; i < totalDays; i++) {
-        const d = new Date(minD); d.setDate(d.getDate() + i);
-        cells.push({ label: d.getDate() + '.' + (d.getMonth() + 1), w: 30, we: d.getDay() === 0 || d.getDay() === 6 });
+      for (let c = new Date(orig); c <= maxD; c.setDate(c.getDate() + 1)) {
+        cells.push({ label: c.getDate() + '.' + (c.getMonth() + 1), w: 30 * hk, we: c.getDay() === 0 || c.getDay() === 6 });
       }
     } else if (zoom === 'week') {
-      let c = new Date(minD); c.setDate(c.getDate() - (c.getDay() === 0 ? 6 : c.getDay() - 1));
-      while (c <= maxD) { cells.push({ label: c.getDate() + '.' + (c.getMonth() + 1), w: 60, we: false }); c.setDate(c.getDate() + 7); }
+      for (let c = new Date(orig); c <= maxD; c.setDate(c.getDate() + 7)) {
+        cells.push({ label: c.getDate() + '.' + (c.getMonth() + 1), w: 60 * hk, we: false });
+      }
     } else {
-      let c = new Date(minD.getFullYear(), minD.getMonth(), 1);
-      const mNames = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
-      while (c <= maxD) { cells.push({ label: mNames[c.getMonth()] + ' ' + c.getFullYear(), w: 100, we: false }); c.setMonth(c.getMonth() + 1); }
+      for (let c = new Date(orig); c <= maxD; c.setMonth(c.getMonth() + 1)) {
+        cells.push({ label: mNames[c.getMonth()] + ' ' + c.getFullYear(), w: 100 * hk, we: false });
+      }
     }
 
     const totalW = cells.reduce((s, c) => s + c.w, 0);
-    const rowH = 36;
+    const rowH = Math.max(36, +document.getElementById('g-rowh').value || 36);
     document.getElementById('g-info').textContent = `${fmtDate(minD)} — ${fmtDate(maxD)} · ${tasks.length} задач`;
 
-    let sideH = `<div class="g-row" style="height:36px;background:var(--bg)"></div>`;
-    tasks.forEach((t, i) => { sideH += `<div class="g-row lvl-${t.lvl}" data-gi="${i}">${esc(t.name)}</div>`; });
+    let sideH = '<div class="g-row" style="height:36px;background:var(--bg)"></div>';
+    if (SH) sideH += `<div class="g-row g-stage-sp" style="height:${SH}px">Этапы (план)</div>`;
+    tasks.forEach((t, i) => {
+      const mk = (t.blk.length ? ' ⛔' : '') + (t.trg.length ? ' ⚡' : '');
+      sideH += `<div class="g-row lvl-${t.lvl}" data-gi="${i}" style="height:${rowH}px">${t.num ? `<span class="g-num">${esc(t.num)}</span>` : ''}${esc(t.name)}${mk}</div>`;
+    });
 
-    let headH = cells.map(c => `<div class="g-cell ${zoom} ${c.we ? 'we' : ''}" style="width:${c.w}px">${c.label}</div>`).join('');
+    const headH = cells.map(c => `<div class="g-cell ${zoom} ${c.we ? 'we' : ''}" style="width:${c.w}px">${c.label}</div>`).join('');
+
+    // Позиции баров (нужны для стрелок связей)
+    const pos = tasks.map(t => {
+      const left = Math.max(0, xOf(t.start));
+      const width = Math.max(20, xOf(nextDay(t.end)) - xOf(t.start));
+      return { left, width, right: left + width };
+    });
+    const idxByRow = {};
+    tasks.forEach((t, i) => { idxByRow[t.rowIndex] = i; });
 
     let barsH = '';
     tasks.forEach((t, i) => {
-      const startOffset = (t.start - minD) / 86400000;
-      const duration = (t.end - t.start) / 86400000 + 1;
-      let left, width;
-      if (zoom === 'day') { left = startOffset * 30; width = duration * 30; }
-      else if (zoom === 'week') { left = (startOffset / 7) * 60; width = (duration / 7) * 60; }
-      else { left = (startOffset / 30.44) * 100; width = (duration / 30.44) * 100; }
-
+      const p = pos[i], top = i * rowH + Math.round((rowH - 22) / 2);
       const cls = t.status === 'Готово' ? 'done' : t.status === 'В процессе' ? 'progress' : 'plan';
-      // Подсказка с Ответственными — через showGTip; клик — переход к задаче в «Таблице»
-      barsH += `<div class="g-bar ${cls}" data-gi="${i}" style="left:${Math.max(0, left)}px;width:${Math.max(20, width)}px;top:${36 + i * rowH + 7}px">
+      barsH += `<div class="g-bar ${cls}${t.blk.length ? ' blocked' : ''}" data-gi="${i}" style="left:${p.left}px;width:${p.width}px;top:${top}px">
         <div class="g-bar-fill" style="width:${t.progress}%"></div>
-        <div class="g-bar-label">${esc(t.name)}</div>
+        <div class="g-bar-label">${t.num ? esc(t.num) + ' ' : ''}${esc(t.name)}</div>
       </div>`;
+
+      // ⛔ Блокер: значок на старте бара + плашка «кто/что мешает» справа
+      if (t.blk.length) {
+        barsH += `<div class="g-flag blk" data-gi="${i}" data-kind="blk" style="left:${Math.max(0, p.left - 10)}px;top:${top - 3}px" title="Блокер">⛔</div>`;
+      }
+      // Правая часть: ⚡ триггер и плашки
+      let mk = '';
+      if (t.trg.length) {
+        mk += `<div class="g-flag trg${t.crit ? ' crit' : ''}" style="position:static" data-gi="${i}" data-kind="trg">⚡</div>`;
+        const targets = t.trg.map(e => e.to.length ? e.to.join(', ') : e.dstName).filter((v, k, a) => a.indexOf(v) === k).join('; ');
+        mk += `<div class="g-pill trg${t.crit ? ' crit' : ''}" data-gi="${i}" data-kind="trg">Триггер → ${esc(targets.length > 38 ? targets.substring(0, 37) + '…' : targets)}</div>`;
+      }
+      if (t.blk.length) {
+        const who = t.blockers.join(', ') || 'причина указана';
+        mk += `<div class="g-pill blk" data-gi="${i}" data-kind="blk">⛔ Блокер: ${esc(who.length > 38 ? who.substring(0, 37) + '…' : who)}</div>`;
+      }
+      // Плановые даты (серые): будущий финиш — справа от полосы, будущий старт — слева
+      let planW = 0;
+      if (showStages) {
+        if (t.end > todayD) {
+          const n = daysTo(t.end);
+          barsH += `<div class="g-plan fin" style="left:${p.right + 5}px;top:${top}px" title="План: завершение ${esc(fmtDate(t.end))} (через ${n} дн.)"><i></i>${fmtShort(t.end)}</div>`;
+          planW = 50;
+        }
+        if (t.start > todayD) {
+          const n = daysTo(t.start);
+          barsH += `<div class="g-plan beg" style="left:${Math.max(0, p.left - 50)}px;top:${top}px" title="План: старт ${esc(fmtDate(t.start))} (через ${n} дн.)">${fmtShort(t.start)}<b></b></div>`;
+        }
+      }
+      if (mk) barsH += `<div class="g-mk" style="left:${p.right + 6 + planW}px;top:${top - 0}px">${mk}</div>`;
     });
+
+    // Стрелки зависимостей (передача информации): красная — ждут, жёлтая — риск срока
+    let svg = '';
+    if (showLinks) {
+      let paths = '';
+      edges.forEach(e => {
+        const a = idxByRow[e.srcRow], b = idxByRow[e.dstRow];
+        if (a == null || b == null) return;
+        const y1 = a * rowH + rowH / 2, y2 = b * rowH + rowH / 2;
+        const x1 = pos[a].right, x2 = pos[b].left;
+        const col = G_EDGE_COLOR[e.state] || G_EDGE_COLOR.planned;
+        let d;
+        if (x2 >= x1 + 14) {
+          const xm = x1 + 8;
+          d = `M${x1},${y1} H${xm} V${y2} H${x2 - 4}`;
+        } else {
+          const ym = y1 + (y2 >= y1 ? 1 : -1) * (rowH / 2);
+          d = `M${x1},${y1} H${x1 + 8} V${ym} H${x2 - 10} V${y2} H${x2 - 4}`;
+        }
+        const w = e.state === 'blocking' ? 2 : 1.3;
+        paths += `<path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" ${e.state === 'planned' || e.state === 'done' ? 'stroke-dasharray="4 3"' : ''} marker-end="url(#ga-${e.state})"><title>${esc(e.srcName + ' → ' + e.dstName + (e.info ? ': ' + e.info : ''))}</title></path>`;
+      });
+      const markers = Object.keys(G_EDGE_COLOR).map(k =>
+        `<marker id="ga-${k}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="${G_EDGE_COLOR[k]}"/></marker>`).join('');
+      svg = `<svg class="g-links" width="${totalW}" height="${tasks.length * rowH}"><defs>${markers}</defs>${paths}</svg>`;
+    }
+
+    // Плановые этапы: полоса сверху (светло-серая, пунктир) + вертикальные пунктиры начала/конца этапа
+    let stripH = '', bandsH = '';
+    stages.forEach((g, k) => {
+      const x1 = xOf(g.start), x2 = xOf(nextDay(g.end)), w = Math.max(6, x2 - x1);
+      const label = (g.num ? g.num + ' ' : '') + g.name;
+      const tip = `${label}: план ${fmtDate(g.start)} — ${fmtDate(g.end)}`;
+      const futEnd = g.end > todayD, futBeg = g.start > todayD;
+      stripH += `<div class="g-stage${futEnd ? ' fut' : ''}" style="left:${x1}px;width:${w}px" title="${esc(tip)}"><span>${esc(label)}</span></div>` +
+        (futBeg ? `<em class="g-sdate" style="left:${x1 - 38}px;width:30px;text-align:right">${fmtShort(g.start)}</em>` : '') +
+        (futEnd ? `<em class="g-sdate" style="left:${x1 + w + 8}px">${fmtShort(g.end)}</em>` : '') +
+        `<i class="g-sdot" style="left:${x1 - 4}px" title="Плановый старт: ${esc(fmtDate(g.start))}"></i>` +
+        `<i class="g-sdia" style="left:${x1 + w - 5}px" title="Плановое завершение этапа: ${esc(fmtDate(g.end))}"></i>`;
+      bandsH += `<div class="g-sband${k % 2 ? ' alt' : ''}" style="left:${x1}px;width:${w}px"></div>` +
+        `<div class="g-sline" style="left:${x1}px"></div><div class="g-sline" style="left:${x1 + w}px"></div>`;
+    });
+
+    // Линия «сегодня»
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const tx = xOf(today);
+    const todayH = (tx >= 0 && tx <= totalW)
+      ? `<div class="g-today" title="Сегодня" style="left:${tx}px;height:${tasks.length * rowH}px"></div>` : '';
 
     root.innerHTML = `<div class="gantt-wrap">
       <div class="g-side-box">
@@ -1338,7 +2053,8 @@
       <div class="gantt-time">
         <div style="width:${totalW}px">
           <div class="g-header">${headH}</div>
-          <div class="g-bar-wrap" style="position:relative;height:${tasks.length * rowH}px">${barsH}</div>
+          ${SH ? `<div class="g-stages" style="height:${SH}px">${stripH}</div>` : ''}
+          <div class="g-bar-wrap" style="position:relative;height:${tasks.length * rowH}px;background-size:100% ${rowH}px;background-position:0 ${rowH - 1}px">${bandsH}${todayH}${svg}${barsH}</div>
         </div>
       </div>
     </div>`;
@@ -1351,10 +2067,11 @@
       gRes.addEventListener('touchstart', ev => startGResize(ev, gRes, gSide), { passive: false });
     }
 
-    // Навешиваем обработчики: тултип при наведении + переход по клику
-    root.querySelectorAll('.g-bar').forEach(el => {
+    // Тултип при наведении + переход по клику (бары, значки и плашки)
+    root.querySelectorAll('.g-bar, .g-flag, .g-pill').forEach(el => {
       const t = ganttTasks[+el.dataset.gi];
-      el.addEventListener('mouseenter', ev => showGTip(ev, t));
+      const kind = el.dataset.kind;
+      el.addEventListener('mouseenter', ev => showGTip(ev, t, kind));
       el.addEventListener('mousemove', moveGTip);
       el.addEventListener('mouseleave', hideGTip);
       el.addEventListener('click', () => { hideGTip(); ganttBarClick(+el.dataset.gi); });
@@ -1367,7 +2084,29 @@
       el.addEventListener('click', () => ganttBarClick(+el.dataset.gi));
     });
     bindGanttSync();
+    if (prevScroll) {
+      const nt = root.querySelector('.gantt-time');
+      if (nt) { nt.scrollLeft = prevScroll.l; nt.scrollTop = prevScroll.t; }
+    }
   }
+
+  // Ползунки Ганта: интервал строк и ширина шкалы (значения запоминаются)
+  function ganttSlider() {
+    const rh = document.getElementById('g-rowh'), hk = document.getElementById('g-hk');
+    document.getElementById('g-rowh-v').textContent = rh.value;
+    document.getElementById('g-hk-v').textContent = hk.value + '%';
+    try { localStorage.setItem('ganttRowH', rh.value); localStorage.setItem('ganttHk', hk.value); } catch (e) {}
+    renderGantt();
+  }
+  (function initGanttSliders() {
+    try {
+      const a = localStorage.getItem('ganttRowH'), b = localStorage.getItem('ganttHk');
+      if (a) document.getElementById('g-rowh').value = a;
+      if (b) document.getElementById('g-hk').value = b;
+    } catch (e) {}
+    document.getElementById('g-rowh-v').textContent = document.getElementById('g-rowh').value;
+    document.getElementById('g-hk-v').textContent = document.getElementById('g-hk').value + '%';
+  })();
 
   function upd(idx, col, val) {
     google.script.run.withSuccessHandler(r => {
