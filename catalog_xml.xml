@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?><site
+	xmlns="http://interactive-answers.webmaster.yandex.ru/schemas/site/0.0.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://interactive-answers.webmaster.yandex.ru/schemas/site/0.0.1  http://interactive-answers.webmaster.yandex.ru/schemas/site-0.0.1.xsd"
+>
+	<title>Краски Alpina (Альпина)</title>
+	<description></description>
+	<rootUrl>https://mamont.by/</rootUrl>
+	<resource>
+		<fixed name="https://mamont.by/catalog/kraski_alpina/?S=-ALPINA-"/>
+	</resource>
+	<filters>
+	<constant key="Y">
+		<description caption="set_filter">
+			<setParameter name="set_filter"/>
+		</description>
+	</constant>
+			<constant key="-ALPINA-">
+			<description caption="S">
+				<setParameter name="S"/>
+			</description>
+		</constant>
+										<dropDown>
+				<description caption="Класс [Основные характеристики]">
+										<setParameter name="arrFilter_837"/>
+				</description>
+									<dropDownValue key="3685786907" caption="стандарт"/>
+									<dropDownValue key="2897712525" caption="профи"/>
+							</dropDown>
+											<dropDown>
+				<description caption="Основа [Основные характеристики]">
+										<setParameter name="arrFilter_97"/>
+				</description>
+									<dropDownValue key="643574442" caption="водно-дисперсионная"/>
+									<dropDownValue key="1734289371" caption="акриловая"/>
+									<dropDownValue key="1061624811" caption="латексная"/>
+									<dropDownValue key="3821482536" caption="силикон-акриловая"/>
+									<dropDownValue key="1715838189" caption="силикатно-акриловая"/>
+							</dropDown>
+											<dropDown>
+				<description caption="Применение [Основные характеристики]">
+										<setParameter name="arrFilter_34"/>
+				</description>
+									<dropDownValue key="1233418" caption="для внутренних работ"/>
+									<dropDownValue key="1997922972" caption="для наружных работ"/>
+							</dropDown>
+											<dropDown>
+				<description caption="Цвет [Основные характеристики]">
+										<setParameter name="arrFilter_107"/>
+				</description>
+									<dropDownValue key="1464639103" caption="бесцветный (под колеровку)"/>
+									<dropDownValue key="2583444381" caption="белый"/>
+							</dropDown>
+											<dropDown>
+				<description caption="Степень глянца [Основные характеристики]">
+										<setParameter name="arrFilter_148"/>
+				</description>
+									<dropDownValue key="1328410468" caption="матовая"/>
+									<dropDownValue key="2703461960" caption="шелковисто-матовая"/>
+							</dropDown>
+											<dropDown>
+				<description caption="Колеровка [Основные характеристики]">
+										<setParameter name="arrFilter_149"/>
+				</description>
+									<dropDownValue key="433021583" caption="компьютерная колеровка"/>
+									<dropDownValue key="1858621977" caption="можно колеровать вручную"/>
+							</dropDown>
+											<dropDown>
+				<description caption="Особенности [Основные характеристики]">
+										<setParameter name="arrFilter_111"/>
+				</description>
+									<dropDownValue key="803890817" caption="стойкая к истиранию"/>
+									<dropDownValue key="1491949079" caption="стойкая к мытью"/>
+									<dropDownValue key="942333938" caption="структурируемая"/>
+							</dropDown>
+											<dropDown>
+				<description caption="Примерная площадь покрытия [Основные характеристики]">
+										<setParameter name=""/>
+				</description>
+									<dropDownValue key="" caption="16"/>
+									<dropDownValue key="" caption="80"/>
+							</dropDown>
+																																		<rangeFilter min="39" max="218" step="1"  unit="Белорусский рубль">
+					<description caption="Розничная цена">
+						<setParameter name="arrFilter_P1_MIN"/>
+						<setParameter name="arrFilter_P1_MAX"/>
+					</description>
+				</rangeFilter>
+							</filters>
+</site>
